@@ -18,6 +18,7 @@ def draw_game():
                 for x in range(map.width):
                         for y in range(map.height):
                                 pygame.draw.rect(screen, map.tiles[x][y][1], pygame.Rect(x * map.tile_size, y * map.tile_size, map.tile_size, map.tile_size))
+        
         elif game.state == 1:
                 p_pos = game.player.pos
                 map = game.world_map
@@ -37,8 +38,8 @@ def draw_game():
                 if int(p_pos.y) + map.game_Ysize//2 > map.height:
                         bottomBound = int(p_pos.y) + map.game_Ysize//2 - map.height
 
-                for x in range((int(p_pos.x) - map.game_Xsize//2) + leftBound, (int(p_pos.x) + map.game_Xsize//2) - rightBound):
-                        for y in range((int(p_pos.y) - map.game_Ysize//2) + topBound, (int(p_pos.y) + map.game_Ysize//2) - bottomBound):
+                for x in range((int(p_pos.x) - map.game_Xsize//2 + leftBound)//ts, (int(p_pos.x) + map.game_Xsize//2 - rightBound)//ts):
+                        for y in range((int(p_pos.y) - map.game_Ysize//2 + topBound)//ts, (int(p_pos.y) + map.game_Ysize//2 - bottomBound)//ts):
                                 pygame.draw.rect(screen, map.tiles[x][y][1], pygame.Rect(x * ts, y * ts, ts, ts))
 
 
