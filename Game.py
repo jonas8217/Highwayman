@@ -36,9 +36,12 @@ class Game:
                 vel += vect(1, 0)
             
             vel = Normalize(vel)
+            
             p_pos = self.player.pos
             t_size = self.world_map.tile_size
+            
             speed_modifier = self.world_map.tiles[int(p_pos.x)//t_size][int(p_pos.y)//t_size][2]
+            
             next_pos = p_pos + vel * speed_modifier
             
             if (0 < next_pos.x < self.world_map.width) and (0 < next_pos.y < self.world_map.height):
