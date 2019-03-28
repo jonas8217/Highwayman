@@ -7,8 +7,6 @@ import numpy as np
 class World_map:
     def __init__(self, w, h, tile_size, seed, size):
         self.tiles = []
-        self.game_Xsize = 20
-        self.game_Ysize = 15
         self.width = w
         self.height = h
         self.tile_size = tile_size

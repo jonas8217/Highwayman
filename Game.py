@@ -14,6 +14,11 @@ class Game:
         self.state = 0
 
         self.world_map = None
+        self.game_scale = 10
+
+        self.world_dim = (200,150)
+
+        self.game_dim = (self.world_dim[0]//self.game_scale, self.world_dim[1]//self.game_scale)
         
         self.player = None
 
@@ -38,13 +43,13 @@ class Game:
             vel = Normalize(vel)
             
             p_pos = self.player.pos
-            t_size = self.world_map.tile_size
-            
-            speed_modifier = self.world_map.tiles[int(p_pos.x)//t_size][int(p_pos.y)//t_size][2]
+            ts = self.world_map.tile_size
+            print(int(p_pos.x)//ts, int(p_pos.y)//ts)
+            speed_modifier = self.world_map.tiles[int(p_pos.x)//ts][int(p_pos.y)//ts][2]
             
             next_pos = p_pos + vel * speed_modifier
             
-            if (0 < next_pos.x < self.world_map.width) and (0 < next_pos.y < self.world_map.height):
+            if (1 < int(next_pos.x) < self.world_map.width * ts - 1) and (1 < int(next_pos.y) < self.world_map.height * ts - 1):
                 self.player.move(vel, speed_modifier)
 
     
