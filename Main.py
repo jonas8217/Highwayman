@@ -23,6 +23,9 @@ def draw_game():
                 for x in range(map.width):
                         for y in range(map.height):
                                 pygame.draw.rect(screen, map.tiles[x][y][1], pygame.Rect(x * ts, y * ts, ts, ts))
+                for city in map.cities:
+                        pygame.draw.circle(screen, city.col, (city.pos[0] * ts, city.pos[1] * ts), city.size, 0)
+                        pygame.draw.circle(screen, (city.col[0]-50, city.col[1]-50, city.col[2]-50), (city.pos[0] * ts, city.pos[1] * ts), city.size-2, 0)
         
         elif game.state == 1:
                 

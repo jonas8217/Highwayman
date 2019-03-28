@@ -1,5 +1,7 @@
 from Perlin import perlingrid as pGrid
-from math import ceil,tanh
+from City import City
+from math import ceil,tanh,sqrt
+from random import randint
 import numpy as np
 
 
@@ -12,6 +14,8 @@ class World_map:
         self.tile_size = tile_size
         self.seed = seed
         self.size = size
+
+        self.cities = []
 
         #confine variabels
         if size < 1:
@@ -60,3 +64,21 @@ class World_map:
                 else:
                     b_type = (5, (55 * (tile-0.8)*5 + 200, 55 * (tile-0.8)*5 + 200, 55 * (tile-0.8)*5 + 200), 0.45) #Mountain_top_snow
                 self.tiles[x].append(b_type)
+
+        # City generation
+        for i in range(100):
+            pos = (randint(8,w-8), randint(8,h-8))
+            if self.tiles[pos[0]][pos[1]][0] == 2: # checks if city bouandaries are okay
+                if self.tiles[pos[0]][pos[1]-4][0] == 2 and self.tiles[pos[0]][pos[1]-4][0] == 2 and self.tiles[pos[0]][pos[1]+4][0] == 2 and self.tiles[pos[0]][pos[1]+4][0] == 2:
+                    good_pos = True
+                    for city in self.cities:
+                        if dist(pos, city.pos) < 15:
+                            good_pos = False
+                    if good_pos:
+                        self.cities.append(City(pos, randint(5,9)))
+
+
+
+def dist(P1,P2):
+        d = sqrt(((P1[0] - P2[0])**2) + ((P1[1] - P2[1])**2))
+        return d
