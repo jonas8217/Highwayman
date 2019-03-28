@@ -44,12 +44,12 @@ class Game:
             
             p_pos = self.player.pos
             ts = self.world_map.tile_size
-            print(int(p_pos.x)//ts, int(p_pos.y)//ts)
             speed_modifier = self.world_map.tiles[int(p_pos.x)//ts][int(p_pos.y)//ts][2]
             
-            next_pos = p_pos + vel * speed_modifier
+            next_pos = p_pos + vel * speed_modifier * self.player.speed
             
-            if (1 < int(next_pos.x) < self.world_map.width * ts - 1) and (1 < int(next_pos.y) < self.world_map.height * ts - 1):
+            #stops player from moving outside the world
+            if (0 < int(next_pos.x) < self.world_map.width * ts) and (0 < int(next_pos.y) < self.world_map.height * ts):
                 self.player.move(vel, speed_modifier)
 
     
