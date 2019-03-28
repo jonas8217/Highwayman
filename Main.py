@@ -20,28 +20,31 @@ def draw_game():
                                 pygame.draw.rect(screen, map.tiles[x][y][1], pygame.Rect(x * map.tile_size, y * map.tile_size, map.tile_size, map.tile_size))
         
         elif game.state == 1:
-                p_pos = game.player.pos
-                map = game.world_map
-                ts = map.tile_size
+                
+                p_pos = game.player.pos # position of player
+                map = game.world_map # World_map object
+                ts = map.tile_size # size of an individual tile in pixels
+                dims = game.game_dim # game_dim[0],game_dim[1] = game view size in tiles
 
-                leftBound = 0
-                rightBound = 0
-                topBound = 0
-                bottomBound = 0
-                # game_dim[0],game_dim[1] = game view size in tiles
-                if int(p_pos.x) - game.game_dim[0]//2 * ts < 0:
-                        leftBound = game.game_dim[0]//2 * ts - int(p_pos.x)
-                if int(p_pos.x) + game.game_dim[0]//2 * ts > map.width * ts:
-                        rightBound = int(p_pos.x) + game.game_dim[0]//2 * ts - map.width * ts
-                if int(p_pos.y) - game.game_dim[1]//2 * ts < 0:
-                        topBound = game.game_dim[1]//2 * ts - int(p_pos.y)
-                if int(p_pos.y) + game.game_dim[1]//2 * ts > map.height * ts:
-                        bottomBound = int(p_pos.y) + game.game_dim[1]//2 * ts - map.height * ts
+                lB = 0 #leftBoundary
+                rB = 0 #rightBoundary
+                tB = 0 #topBoundary
+                bB = 0 #bottomBoundary
+
+                
+                if int(p_pos.x) - dims[0]//2 * ts < 0:
+                        lB = dims[0]//2 * ts - int(p_pos.x)
+                if int(p_pos.x) + dims[0]//2 * ts > map.width * ts:
+                        rB = int(p_pos.x) + dims[0]//2 * ts - map.width * ts
+                if int(p_pos.y) - dims[1]//2 * ts < 0:
+                        tB = dims[1]//2 * ts - int(p_pos.y)
+                if int(p_pos.y) + dims[1]//2 * ts > map.height * ts:
+                        bB = int(p_pos.y) + dims[1]//2 * ts - map.height * ts
                 
                 screen.fill((100, 100, 100))
 
-                for x in range((int(p_pos.x) + leftBound)//ts - game.game_dim[0]//2, (int(p_pos.x) - rightBound)//ts + game.game_dim[0]//2):
-                        for y in range((int(p_pos.y) + topBound)//ts - game.game_dim[1]//2, (int(p_pos.y) - bottomBound)//ts + game.game_dim[1]//2):
+                for x in range((int(p_pos.x) + lB)//ts - dims[0]//2, (int(p_pos.x) - rB)//ts + dims[0]//2):
+                        for y in range((int(p_pos.y) + tB)//ts - dims[1]//2, (int(p_pos.y) - bB)//ts + dims[1]//2):
                                 pygame.draw.rect(screen, map.tiles[x][y][1], pygame.Rect(x * ts, y * ts, ts, ts))
 
 
