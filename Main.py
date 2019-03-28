@@ -51,9 +51,14 @@ def draw_game():
         
         screen.fill((100, 100, 100))
 
-        for x in range(int(p_pos.x)//ts + lB - dims[0]//2, int(p_pos.x)//ts - rB + dims[0]//2):
-            for y in range(int(p_pos.y)//ts + tB - dims[1]//2, int(p_pos.y)//ts - bB + dims[1]//2):
+        for x in range(int(p_pos.x)//ts - dims[0]//2 + lB, int(p_pos.x)//ts + dims[0]//2 - rB):
+            for y in range(int(p_pos.y)//ts - dims[1]//2 + tB, int(p_pos.y)//ts + dims[1]//2 - bB):
                 pygame.draw.rect(screen, map.tiles[x][y][1], pygame.Rect(x * ts, y * ts, ts, ts))
+        
+        for city in map.cities:
+            #if sqrt(((city.pos[0] - p_pos[0])**2) + ((city.pos[1] - p_pos[1])**2)) < dims[0]//2 - city.size/ts:
+            pygame.draw.circle(screen, city.col, (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size, 0)
+            pygame.draw.circle(screen, (city.col[0]-50, city.col[1]-50, city.col[2]-50), (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size-2, 0)
 
 
         pygame.draw.circle(screen, (255, 0, 0), (int(p_pos.x), int(p_pos.y)), game.world_map.tile_size, 0)

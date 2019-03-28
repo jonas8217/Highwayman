@@ -25,7 +25,7 @@ class Game:
     def tick(self, pg, pressed):
         if self.state == 0.5:
             if pressed[pg.K_r]:
-                self.generate_world(200,150,4,randint(1,500),3)
+                self.generate_world(self.world_dim[0],self.world_dim[1],4,randint(1,500),3)
         
         if self.state == 1:
 
