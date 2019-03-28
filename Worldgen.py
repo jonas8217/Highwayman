@@ -76,6 +76,10 @@ class World_map:
                             good_pos = False
                     if good_pos:
                         self.cities.append(City(pos, randint(5,9)))
+        
+        # Road generation
+        for city in self.cities:
+            pass
 
 
 
