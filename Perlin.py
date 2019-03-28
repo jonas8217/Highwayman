@@ -1,6 +1,4 @@
-
 import numpy as np
-import matplotlib.pyplot as plt
 
 def perlin(x,y,seed=0):
     # permutation table
@@ -52,6 +50,4 @@ def perlingrid(b, res, seed):
 p = perlingrid(3, 1000, 1)
 
 print(p.dtype, p.shape, p[1][1])
-plt.imshow(p,origin='upper')
-plt.show()
 """

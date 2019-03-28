@@ -16,6 +16,7 @@ class World_map:
         self.size = size
 
         self.cities = []
+        self.roads = []
 
         #confine variabels
         if size < 1:
@@ -69,20 +70,23 @@ class World_map:
         for i in range(100):
             pos = (randint(8,w-8), randint(8,h-8))
             if self.tiles[pos[0]][pos[1]][0] == 2: # checks if city bouandaries are okay
-                if self.tiles[pos[0]][pos[1]-4][0] == 2 and self.tiles[pos[0]][pos[1]-4][0] == 2 and self.tiles[pos[0]][pos[1]+4][0] == 2 and self.tiles[pos[0]][pos[1]+4][0] == 2:
+                if self.tiles[pos[0]][pos[1]-4][0] == self.tiles[pos[0]-4][pos[1]][0] == self.tiles[pos[0]+4][pos[1]][0] == self.tiles[pos[0]][pos[1]+4][0] == 2:
                     good_pos = True
                     for city in self.cities:
-                        if dist(pos, city.pos) < 15:
+                        if dist(pos, city.pos) < 25:
                             good_pos = False
                     if good_pos:
-                        self.cities.append(City(pos, randint(5,9)))
+                        self.cities.append(City(pos))
         
         # Road generation
+        unroaded_cities = self.cities.copy()
         for city in self.cities:
-            pass
-
+            closest = self.cities[-1]
+            for unroaded in unroaded_cities:
+                if dist(city.pos, unroaded.pos) < dist(city.pos, closest.pos):
+                    closest = unroaded
 
 
 def dist(P1,P2):
-        d = sqrt(((P1[0] - P2[0])**2) + ((P1[1] - P2[1])**2))
-        return d
+    d = sqrt(((P1[0] - P2[0])**2) + ((P1[1] - P2[1])**2))
+    return d
