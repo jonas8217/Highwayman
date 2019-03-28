@@ -5,14 +5,17 @@ from Game import Game
 def draw_game():
         screen_info = pygame.display.Info()
         w, h = screen_info.current_w, screen_info.current_h
+
         if game.state == 0:
+
                 game.textinput = pygame_textinput.TextInput()
                 pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 0, w, h))
 
-                pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(360, 280, 80, 40))
+                pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(w//2 - 40, h//2 - 20, 80, 40))
                 screen.blit(myfont.render("MENU", 1, (255, 255, 255)), (381, 291))
 
         elif game.state == 0.5:
+
                 map = game.world_map # World_map object
                 ts = map.tile_size # size of an individual tile in pixels
 
@@ -75,7 +78,7 @@ def draw_game():
                 """
 
         elif game.state == 2:
-                pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(360, 280, 80, 40))
+                pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(w//2 - 40, h//2 - 20, 80, 40))
                 screen.blit(myfont.render("PAUSE", 1, (255, 255, 255)), (377, 291))
 
         if game.state == 2 or game.state == 0:
