@@ -1,5 +1,6 @@
 import pygame
 import pygame_textinput
+from math import sqrt
 from Game import Game
 
 def draw_game():
@@ -26,6 +27,9 @@ def draw_game():
         for city in map.cities:
             pygame.draw.circle(screen, city.col, (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size, 0)
             pygame.draw.circle(screen, (city.col[0]-50, city.col[1]-50, city.col[2]-50), (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size-2, 0)
+        for road in map.roads:
+            pygame.draw.line(screen, (181, 103, 36), (road.P1[0] * ts, road.P1[1] * ts), (road.P2[0] * ts, road.P2[1] * ts), 5)
+            pygame.draw.line(screen, (209, 147, 54), (road.P1[0] * ts, road.P1[1] * ts), (road.P2[0] * ts, road.P2[1] * ts), 3)
     
     elif game.state == 1:
         
@@ -56,9 +60,9 @@ def draw_game():
                 pygame.draw.rect(screen, map.tiles[x][y][1], pygame.Rect(x * ts, y * ts, ts, ts))
         
         for city in map.cities:
-            #if sqrt(((city.pos[0] - p_pos[0])**2) + ((city.pos[1] - p_pos[1])**2)) < dims[0]//2 - city.size/ts:
-            pygame.draw.circle(screen, city.col, (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size, 0)
-            pygame.draw.circle(screen, (city.col[0]-50, city.col[1]-50, city.col[2]-50), (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size-2, 0)
+            if sqrt(((city.pos[0] - p_pos[0]//ts)**2) + ((city.pos[1] - p_pos[1]//ts)**2)) < sqrt((dims[0]//2)**2 + (dims[1]//2)) + city.size:
+                pygame.draw.circle(screen, city.col, (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size, 0)
+                pygame.draw.circle(screen, (city.col[0]-50, city.col[1]-50, city.col[2]-50), (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size-2, 0)
 
 
         pygame.draw.circle(screen, (255, 0, 0), (int(p_pos.x), int(p_pos.y)), game.world_map.tile_size, 0)

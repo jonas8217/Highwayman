@@ -1,5 +1,5 @@
 
 class Road:
-    def __init__ (self, C1, C2):
-        self.P1 = C1
-        self.P2 = C2
+    def __init__ (self, P1, P2):
+        self.P1 = P1
+        self.P2 = P2

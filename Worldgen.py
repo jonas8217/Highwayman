@@ -1,5 +1,6 @@
 from Perlin import perlingrid as pGrid
 from City import City
+from Road import Road
 from math import ceil,tanh,sqrt
 from random import randint
 import numpy as np
@@ -80,11 +81,9 @@ class World_map:
         
         # Road generation
         unroaded_cities = self.cities.copy()
+        
         for city in self.cities:
-            closest = self.cities[-1]
-            for unroaded in unroaded_cities:
-                if dist(city.pos, unroaded.pos) < dist(city.pos, closest.pos):
-                    closest = unroaded
+            
 
 
 def dist(P1,P2):
