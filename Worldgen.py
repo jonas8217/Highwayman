@@ -89,7 +89,7 @@ class World_map:
                         closest = c2
                     elif dist(c1.pos, c2.pos) < dist(c1.pos, closest.pos):
                         closest = c2
-            road_map.append([[c1.pos, closest.pos]])
+            road_map.append([(c1.pos, closest.pos)])
 
         for bunch in road_map:
             for road in bunch:
@@ -104,34 +104,43 @@ class World_map:
             if len(road_map[i - j]) == 0:
                 road_map.pop(i - j)
                 j += 1
-        print(road_map)
         
-        for i in range(len(road_map)):
-            road_map[i] 
-            
+        print("before")
         print(road_map)
-    
+        to_pop = []
+        for bunch in road_map:
+            for road in bunch:
+                for other_road in bunch:
+                    if road is not other_road and bunch.index(road) < bunch.index(other_road):
+                        if road[0] in other_road and road[1] in other_road:
+                            to_pop.append((road_map.index(bunch), bunch.index(road)))
+                            break
+
+        print(to_pop)
+        for i in to_pop[::-1]:
+            print(i[0], i[1])
+            road_map[i[0]].pop(i[1])           
+        
+        print("after")
+        print(road_map)
 
         
-        
-
-        """
-        while len(connections) > 1:
-            for c in connections:
+        while len(road_map) > 1:
+            for road in road_map:
                 closest_pair = None
-                for otherc in connections:
+                for other_road in road_map:
                     
-                    if c is not otherc:
-                        for p1 in c:
-                            for p2 in otherc:
+                    if road is not other_road:
+                        for p1 in road:
+                            for p2 in other_road:
                                 
                                 if closest_pair is None:
                                     closest_pair = (p1, p2)
                                 elif dist(p1, p2) < dist(p1, closest):
                                     closest_pair = (p1, p2)
                 
-                connections.append(closest_pair[0].pos, closest_pair[1].pos)
-        """
+                road_map.append(closest_pair[0].pos, closest_pair[1].pos)
+
         
         
 
@@ -139,11 +148,11 @@ class World_map:
 def dist(P1,P2):
     return sqrt(((P1[0] - P2[0])**2) + ((P1[1] - P2[1])**2))
 
-def unique(lst):
+def uniq(lst):
     seen = set()
-    unique = []
+    uniq = []
     for i in lst:
         if i not in seen:
-            unique.append(i)
+            uniq.append(i)
             seen.add(i)
-    return unique
+    return uniq
