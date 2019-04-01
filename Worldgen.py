@@ -80,23 +80,70 @@ class World_map:
                         self.cities.append(City(pos))
         
         # Road generation
-        connections = []
+        road_map = []
         for c1 in self.cities:
             closest = None
             for c2 in self.cities:
                 if c1 is not c2:
                     if closest is None:
                         closest = c2
-                    else:
-                        if dist(c1.pos, c2.pos) < dist(c1.pos, closest.pos):
-                            closest = c2
-            connections.append([c1.pos, closest.pos])
+                    elif dist(c1.pos, c2.pos) < dist(c1.pos, closest.pos):
+                        closest = c2
+            road_map.append([[c1.pos, closest.pos]])
+
+        for bunch in road_map:
+            for road in bunch:
+                for other_bunch in road_map:    
+                    if bunch is not other_bunch:
+                        for other_road in other_bunch:
+                            if road[0] in other_road or road[1] in other_road:
+                                bunch.append(other_road)
+                                other_bunch.pop(other_bunch.index(other_road))
+        j = 0
+        for i in range(len(road_map)):
+            if len(road_map[i - j]) == 0:
+                road_map.pop(i - j)
+                j += 1
+        print(road_map)
         
-        for c in connections:
-            self.roads.append(Road(c[0], c[1]))
+        for i in range(len(road_map)):
+            road_map[i] 
+            
+        print(road_map)
+    
+
+        
+        
+
+        """
+        while len(connections) > 1:
+            for c in connections:
+                closest_pair = None
+                for otherc in connections:
+                    
+                    if c is not otherc:
+                        for p1 in c:
+                            for p2 in otherc:
+                                
+                                if closest_pair is None:
+                                    closest_pair = (p1, p2)
+                                elif dist(p1, p2) < dist(p1, closest):
+                                    closest_pair = (p1, p2)
+                
+                connections.append(closest_pair[0].pos, closest_pair[1].pos)
+        """
+        
         
 
 
 def dist(P1,P2):
-    d = sqrt(((P1[0] - P2[0])**2) + ((P1[1] - P2[1])**2))
-    return d
+    return sqrt(((P1[0] - P2[0])**2) + ((P1[1] - P2[1])**2))
+
+def unique(lst):
+    seen = set()
+    unique = []
+    for i in lst:
+        if i not in seen:
+            unique.append(i)
+            seen.add(i)
+    return unique
