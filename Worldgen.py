@@ -80,10 +80,21 @@ class World_map:
                         self.cities.append(City(pos))
         
         # Road generation
-        unroaded_cities = self.cities.copy()
+        connections = []
+        for c1 in self.cities:
+            closest = None
+            for c2 in self.cities:
+                if c1 is not c2:
+                    if closest is None:
+                        closest = c2
+                    else:
+                        if dist(c1.pos, c2.pos) < dist(c1.pos, closest.pos):
+                            closest = c2
+            connections.append([c1.pos, closest.pos])
         
-        for city in self.cities:
-            
+        for c in connections:
+            self.roads.append(Road(c[0], c[1]))
+        
 
 
 def dist(P1,P2):
