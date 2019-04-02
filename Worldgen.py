@@ -47,6 +47,7 @@ class World_map:
             self.tiles.append([])
             for y in range(h):
                 tile = tanh(p[x][y]/(0.45*(size_val/0.5)))*0.5+0.5
+                #tile = p[x][y]
                 """
                 if (x, y) == max_pos:
                     b_type = (-1, (255,0,0))
@@ -90,57 +91,62 @@ class World_map:
                     elif dist(c1.pos, c2.pos) < dist(c1.pos, closest.pos):
                         closest = c2
             road_map.append([(c1.pos, closest.pos)])
-
-        for bunch in road_map:
-            for road in bunch:
-                for other_bunch in road_map:    
-                    if bunch is not other_bunch:
-                        for other_road in other_bunch:
-                            if road[0] in other_road or road[1] in other_road:
-                                bunch.append(other_road)
-                                other_bunch.pop(other_bunch.index(other_road))
-        j = 0
-        for i in range(len(road_map)):
-            if len(road_map[i - j]) == 0:
-                road_map.pop(i - j)
-                j += 1
         
-        print("before")
-        print(road_map)
-        to_pop = []
-        for bunch in road_map:
-            for road in bunch:
-                for other_road in bunch:
-                    if road is not other_road and bunch.index(road) < bunch.index(other_road):
-                        if road[0] in other_road and road[1] in other_road:
-                            to_pop.append((road_map.index(bunch), bunch.index(road)))
-                            break
 
-        print(to_pop)
-        for i in to_pop[::-1]:
-            print(i[0], i[1])
-            road_map[i[0]].pop(i[1])           
-        
-        print("after")
-        print(road_map)
-
-        
         while len(road_map) > 1:
-            for road in road_map:
-                closest_pair = None
-                for other_road in road_map:
-                    
-                    if road is not other_road:
-                        for p1 in road:
-                            for p2 in other_road:
-                                
-                                if closest_pair is None:
-                                    closest_pair = (p1, p2)
-                                elif dist(p1, p2) < dist(p1, closest):
-                                    closest_pair = (p1, p2)
-                
-                road_map.append(closest_pair[0].pos, closest_pair[1].pos)
+            for bunch in road_map:
+                for road in bunch:
+                    for other_bunch in road_map:    
+                        if bunch is not other_bunch:
+                            for other_road in other_bunch[::-1]:
+                                if road[0] in other_road or road[1] in other_road:
+                                    bunch.append(other_road)
+                                    other_bunch.pop(other_bunch.index(other_road))
+            
+            j = 0
+            for i in range(len(road_map)):
+                if len(road_map[i - j]) == 0:
+                    road_map.pop(i - j)
+                    j += 1
 
+            to_pop = []
+            for bunch in road_map:
+                for road in bunch:
+                    for other_road in bunch:
+                        if road is not other_road and bunch.index(road) < bunch.index(other_road):
+                            if road[0] in other_road and road[1] in other_road:
+                                to_pop.append((road_map.index(bunch), bunch.index(road)))
+
+            
+            for i in to_pop[::-1]:
+                road_map[i[0]].pop(i[1])           
+            
+            print(road_map)
+            print("before")
+
+            if len(road_map) > 1:
+                for bunch in road_map:
+                    closest_pair = None
+                    for road in bunch:
+                        for other_bunch in road_map:
+                            if bunch is not other_bunch:
+                                for other_road in other_bunch:
+
+                                    for p1 in road:
+                                        for p2 in other_road:
+                                            
+                                            if closest_pair is None:
+                                                closest_pair = (p1, p2)
+                                            elif dist(p1, p2) < dist(closest_pair[0], closest_pair[1]):
+                                                closest_pair = (p1, p2)
+                    bunch.append(closest_pair)
+            
+            print(road_map)
+            print(len(road_map))
+            print('\n')
+        for road in road_map[0]:
+            self.roads.append(Road(road[0], road[1]))
+        
         
         
 
