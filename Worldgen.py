@@ -81,6 +81,47 @@ class World_map:
                         self.cities.append(City(pos))
         
         # Road generation
+        dists = []
+        for c1 in self.cities:
+            for c2 in self.cities:
+                if c1 is not c2:
+                    dists.append((c1, c2, dist(c1.pos, c2.pos)))
+
+        
+        connections = []
+        unfound = self.cities.copy()
+        
+        s_dist = shortets_dist(dists)
+        connections.append(s_dist)
+        
+        unfound.pop(unfound.index(s_dist[0]))
+        unfound.pop(unfound.index(s_dist[1]))
+        
+        while len(unfound) != 0:
+            cons = []
+
+            for con in connections:
+                for dis in dists:
+                    if (con[0] in dis or con[1] in dis) and not (con[0] in dis and con[1] in dis) and (dis[0] in unfound or dis[1] in unfound):
+                        cons.append(dis)
+
+            s_dist = shortets_dist(cons)
+            
+            connections.append(s_dist)
+
+            i = 0
+            if s_dist[1] in unfound:
+                i = 1
+            unfound.pop(unfound.index(s_dist[i]))
+
+
+            
+
+        for c in connections:
+            self.roads.append(Road(c[0], c[1]))
+        
+        
+        """
         road_map = []
         for c1 in self.cities:
             closest = None
@@ -146,12 +187,13 @@ class World_map:
             print('\n')
         for road in road_map[0]:
             self.roads.append(Road(road[0], road[1]))
-        
-        
-        
+        """
 
 
-def dist(P1,P2):
+
+
+
+def dist(P1, P2):
     return sqrt(((P1[0] - P2[0])**2) + ((P1[1] - P2[1])**2))
 
 def uniq(lst):
@@ -162,3 +204,36 @@ def uniq(lst):
             uniq.append(i)
             seen.add(i)
     return uniq
+
+def shortets_dist(dists):
+    shortest = None
+    for d in dists:
+        if shortest == None:
+            shortest = d
+        elif d[2] < shortest[2]:
+            shortest = d
+    return shortest
+
+
+
+"""
+def contains(cons, cities):
+    l = []
+    for c in cons:
+        l.append(c[0])
+        l.append(c[1])
+    is_in = set(cities).issubset(l)
+    return is_in
+"""
+
+"""
+def contained_within(item, List):
+    c1, c2 = False, False
+    for l in List:
+        if item[0] is l[0] or item[0] is l[1]:
+            c1 = True
+        if item[1] is l[0] or item[1] is l[1]:
+            c2 = True
+    return c1 and c2
+"""
+
