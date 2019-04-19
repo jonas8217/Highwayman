@@ -2,6 +2,7 @@ from Perlin import perlingrid as pGrid
 from City import City
 from Road import Road
 from math import ceil,tanh,sqrt
+from Vector import Length,Normalize,Vector as vect
 from random import randint
 import numpy as np
 
@@ -50,23 +51,23 @@ class World_map:
                 #tile = p[x][y]
                 """
                 if (x, y) == max_pos:
-                    b_type = (-1, (255,0,0))
+                    tile_inf = (-1, (255,0,0))
                 elif (x, y) == min_pos:
-                    b_type = (-1, (255,255,0))
+                    tile_inf = (-1, (255,255,0))
                 """
                 if tile < 0.2:
-                    b_type = (0, (13 - tile * 54, 61 - tile * 57, 120 - tile * 61), 0.2) #Water
+                    tile_inf = (0, (13 - tile * 54, 61 - tile * 57, 120 - tile * 61), 0.2) #Water
                 elif tile < 0.22:
-                    b_type = (1, (246, 220, 55), 0.75) #Beach
+                    tile_inf = (1, (246, 220, 55), 0.75) #Beach
                 elif tile < 0.65:
-                    b_type = (2, (146, 203, 54), 1.25) #Grassland
+                    tile_inf = (2, (146, 203, 54), 1.25) #Grassland
                 elif tile < 0.7:
-                    b_type = (3, (107, 164, 15), 1) #Highlands
+                    tile_inf = (3, (107, 164, 15), 1) #Highlands
                 elif tile < 0.8:
-                    b_type = (4, (-45 * (tile-0.7)*10 + 140, -45 * (tile-0.7)*10 + 140, -45 * (tile-0.7)*10 + 140), 0.6) #Mountain
+                    tile_inf = (4, (-45 * (tile-0.7)*10 + 140, -45 * (tile-0.7)*10 + 140, -45 * (tile-0.7)*10 + 140), 0.6) #Mountain
                 else:
-                    b_type = (5, (55 * (tile-0.8)*5 + 200, 55 * (tile-0.8)*5 + 200, 55 * (tile-0.8)*5 + 200), 0.45) #Mountain_top_snow
-                self.tiles[x].append(b_type)
+                    tile_inf = (5, (55 * (tile-0.8)*5 + 200, 55 * (tile-0.8)*5 + 200, 55 * (tile-0.8)*5 + 200), 0.45) #Mountain_top_snow
+                self.tiles[x].append(tile_inf)
 
         # City generation
         for i in range(100):
@@ -102,8 +103,9 @@ class World_map:
             # Finds the shortest connection which has both a connection to 'connected' and to 'unfound' insuring a correct connection
             for con in connections: 
                 for dis in dists:
-                    if (con[0] in dis or con[1] in dis) and (dis[0] in unfound or dis[1] in unfound): 
-                        cons.append(dis)
+                    if (con[0] in dis or con[1] in dis) and (dis[0] in unfound or dis[1] in unfound):
+                        if self.uninterrupted_path(dis):
+                            cons.append(dis)
 
             s_dist = shortets_dist(cons)
             
@@ -113,10 +115,23 @@ class World_map:
             if s_dist[1] in unfound:                #
                 i = 1                               #
             unfound.pop(unfound.index(s_dist[i]))   #
-
+            
         for c in connections:                       # Create road objects and add to self.roads
             self.roads.append(Road(c[0], c[1]))     #
         
+    def uninterrupted_path(self, dis):
+        c1pos, c2pos = dis[0].pos, dis[1].pos
+        V = vect(c2pos[0] - c1pos[0], c2pos[1] - c1pos[1])
+        length = Length(V)
+        V = Normalize(V)
+        pos_V = vect(c1pos[0], c1pos[1])
+        uninterrupted = True
+        for i in range(int(length)):
+            Pos = pos_V + V * i
+            tile = self.tiles[int(Pos[0])][int(Pos[1])]
+            if not (2 <= tile[0] <= 3):
+                uninterrupted = False
+        return uninterrupted
 
 def dist(P1, P2):
     # Returns distance between 2 points
