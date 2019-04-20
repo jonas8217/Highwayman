@@ -88,36 +88,66 @@ class World_map:
                 if c1 is not c2:                                    #
                     dists.append((c1, c2, dist(c1.pos, c2.pos)))    # Create touple of 2 cities and distance: (c1, c2, float: 'distance') and adds them to 'dists' list
         
-        connections = [] # Connected cites
+        connections = [[]] # Connected cites
         unfound = self.cities.copy() # Unconnected cities
         
-        s_dist = shortets_dist(dists)
+        for un in unfound:
+            s_dist = shortets_dist(dists)
+            if self.uninterrupted_path(s_dist):
+                connections[-1].append(s_dist)        # Append to new connection to connections
+                unfound.pop(unfound.index(s_dist[0])) # and
+                unfound.pop(unfound.index(s_dist[1])) # Remove now found cities
+                break
+            else:
+                unfound.pop(unfound.index(un))
 
-        connections.append(s_dist)            # Append to new connection to connections
-        unfound.pop(unfound.index(s_dist[0])) # and
-        unfound.pop(unfound.index(s_dist[1])) # Remove now found city
+
         
         while len(unfound) != 0: #Keeps going until there are no more unfound citites (all cities are found)
-            cons = []
             
             # Finds the shortest connection which has both a connection to 'connected' and to 'unfound' insuring a correct connection
-            for con in connections: 
+            cons = []
+            
+            for con in connections[-1]: 
                 for dis in dists:
-                    if (con[0] in dis or con[1] in dis) and (dis[0] in unfound or dis[1] in unfound):
-                        if self.uninterrupted_path(dis):
+                    if (con[0] in dis[:2] or con[1] in dis[:2]) and (dis[0] in unfound or dis[1] in unfound):
+                        if self.uninterrupted_path(dis):  # Check for landscape violation (if the road crosses something besides Grass- or Highlands)
                             cons.append(dis)
 
             s_dist = shortets_dist(cons)
-            
-            connections.append(s_dist)              # Add new connection
+            if s_dist is not None:
+                connections[-1].append(s_dist)          # Add new connection
 
-            i = 0                                   # Delete city from unfound 
-            if s_dist[1] in unfound:                #
-                i = 1                               #
-            unfound.pop(unfound.index(s_dist[i]))   #
+                i = 0                                   # Delete city from unfound 
+                if s_dist[1] in unfound:                #
+                    i = 1                               #
+                unfound.pop(unfound.index(s_dist[i]))   #
             
-        for c in connections:                       # Create road objects and add to self.roads
-            self.roads.append(Road(c[0], c[1]))     #
+            
+            elif len(unfound) > 1:
+                cons = []
+                for dis in dists:
+                    if dis[0] in unfound and dis[1] in unfound:
+                        if self.uninterrupted_path(dis):
+                            cons.append(dis)
+                
+                s_dist = shortets_dist(cons)
+                if s_dist is not None:
+
+                    connections[-1].append(s_dist)        # Add to new connection to connections
+                    unfound.pop(unfound.index(s_dist[0])) # and
+                    unfound.pop(unfound.index(s_dist[1])) # Remove now found cities
+                
+                else:
+                    unfound[:] = []
+            
+            else:
+                break
+                
+
+        for con in connections:                     # Create road objects and add to self.roads
+            for c in con:                           #
+                self.roads.append(Road(c[0], c[1])) #
         
     def uninterrupted_path(self, dis):
         c1pos, c2pos = dis[0].pos, dis[1].pos
