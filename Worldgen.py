@@ -98,6 +98,7 @@ class World_map:
                 unfound.pop(unfound.index(s_dist[0])) # and
                 unfound.pop(unfound.index(s_dist[1])) # Remove now found cities
                 break
+            
             else:
                 unfound.pop(unfound.index(un))
 
@@ -145,9 +146,9 @@ class World_map:
                 break
                 
 
-        for con in connections:                     # Create road objects and add to self.roads
-            for c in con:                           #
-                self.roads.append(Road(c[0], c[1])) #
+        for con in connections:                             # Create road objects and add to self.roads
+            for c in con:                                   #
+                self.roads.append(Road(c[0], c[1], c[2]))   #
         
     def uninterrupted_path(self, dis):
         c1pos, c2pos = dis[0].pos, dis[1].pos

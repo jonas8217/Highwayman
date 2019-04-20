@@ -3,6 +3,7 @@ from random import randint
 from highscoreLogger import Logger
 from Worldgen import World_map
 from Player import Player
+from Merchant import Merchant
 from Vector import Normalize,Vector as vect
 import pickle
 
@@ -22,6 +23,10 @@ class Game:
         
         self.player = None
 
+        self.merchants = []
+
+        self.escorts = []
+
     def tick(self, pg, pressed):
         if self.state == 0.5:
             if pressed[pg.K_r]:
@@ -29,28 +34,41 @@ class Game:
         
         if self.state == 1:
 
-            #controls
-            vel = vect(0, 0)
+            #Controls input
+            #Player
+            p_vel = vect(0, 0)
             if pressed[pg.K_UP]:
-                vel += vect(0, -1)
+                p_vel += vect(0, -1)
             if pressed[pg.K_DOWN]:
-                vel += vect(0, 1)
+                p_vel += vect(0, 1)
             if pressed[pg.K_LEFT]:
-                vel += vect(-1, 0)
+                p_vel += vect(-1, 0)
             if pressed[pg.K_RIGHT]:
-                vel += vect(1, 0)
+                p_vel += vect(1, 0)
             
-            vel = Normalize(vel)
+            
+            
+            # Debugging
+            if pressed[pg.K_m]:
+                self.merchants.append(Merchant(self.world_map.cities[0], self.world_map.cities[1], None))
+
+            # Movement
+            # Player
+            p_vel = Normalize(p_vel)
             
             p_pos = self.player.pos
             ts = self.world_map.tile_size
             speed_modifier = self.world_map.tiles[int(p_pos.x)//ts][int(p_pos.y)//ts][2]
             
-            next_pos = p_pos + vel * speed_modifier * self.player.speed
-            
+            next_pos = p_pos + p_vel * speed_modifier * self.player.speed
+
             #stops player from moving outside the world
             if (0 < int(next_pos.x) < self.world_map.width * ts) and (0 < int(next_pos.y) < self.world_map.height * ts):
-                self.player.move(vel, speed_modifier)
+                self.player.move(p_vel, speed_modifier)
+
+            #Merchants
+            for merchant in self.merchants:
+                merchant.move()
 
     
 
@@ -90,11 +108,11 @@ class Game:
 
         #online database
         if self.points > 0:
-            self.logger.post_score('Astroid', self.points, str(name), self.stage)
+            self.logger.post_score('Highwayman', self.points, str(name), self.stage)
 
         scores = []
         try:
-            for s in self.logger.get_scores('Astroid'):
+            for s in self.logger.get_scores('Highwayman'):
                 scores.append({'Name': s['Opt1'], 'Score': s['Score'], 'Stage': s['Opt2']})
             scores = sorted(scores, key=lambda scores: scores['Score'], reverse=True)
         except:
@@ -105,7 +123,7 @@ class Game:
     def get_highscores(self):
         scores = []
         try:
-            for s in self.logger.get_scores('Astroid'):
+            for s in self.logger.get_scores('Highwayman'):
                 scores.append({'Name': s['Opt1'], 'Score': s['Score'], 'Stage': s['Opt2']})
             return sorted(scores, key=lambda scores: scores['Score'], reverse=True)
         except:

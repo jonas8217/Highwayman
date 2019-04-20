@@ -25,8 +25,8 @@ def draw_game():
             for y in range(map.height):
                 pygame.draw.rect(screen, map.tiles[x][y][1], pygame.Rect(x * ts, y * ts, ts, ts))
         for road in map.roads:
-            pygame.draw.line(screen, (181, 103, 36), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), 5)
-            pygame.draw.line(screen, (209, 147, 54), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), 3)
+            pygame.draw.line(screen, (181, 103, 36), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), int(ts * 2))
+            pygame.draw.line(screen, (209, 147, 54), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), ts)
         for city in map.cities:
             pygame.draw.circle(screen, city.col, (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size, 0)
             pygame.draw.circle(screen, (city.col[0]-50, city.col[1]-50, city.col[2]-50), (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size-2, 0)
@@ -60,20 +60,25 @@ def draw_game():
         for x in range(int(p_pos.x)//ts - dims[0]//2 + lB, int(p_pos.x)//ts + dims[0]//2 - rB):
             for y in range(int(p_pos.y)//ts - dims[1]//2 + tB, int(p_pos.y)//ts + dims[1]//2 - bB):
                 pygame.draw.rect(screen, map.tiles[x][y][1], pygame.Rect(x * ts, y * ts, ts, ts))
+        
         for road in map.roads:
             P1, P2 = road.P1, road.P2
             roadlen = dist(P1, P2)
             PMid = ((P1[0] + P2[0])/2, (P1[1] + P2[1])/2)
             if dist(PMid, (p_pos[0]//ts, p_pos[1]//ts)) < sqrt((dims[0]//2)**2 + (dims[1]//2)**2) + roadlen/2:
-                pygame.draw.line(screen, (181, 103, 36), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), 5)
-                pygame.draw.line(screen, (209, 147, 54), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), 3)
+                pygame.draw.line(screen, (181, 103, 36), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), int(ts * 1.5))
+                pygame.draw.line(screen, (209, 147, 54), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), ts)
+        
         for city in map.cities:
             if sqrt(((city.pos[0] - p_pos[0]//ts)**2) + ((city.pos[1] - p_pos[1]//ts)**2)) < sqrt((dims[0]//2)**2 + (dims[1]//2)) + city.size:
                 pygame.draw.circle(screen, city.col, (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size, 0)
                 pygame.draw.circle(screen, (city.col[0]-50, city.col[1]-50, city.col[2]-50), (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size-2, 0)
+        
+        for merchant in game.merchants:
+            pygame.draw.circle(screen, (0, 255, 0), (int(merchant.pos.x) * ts + ts//2 , int(merchant.pos.y) * ts + ts//2), 3, 0)
 
 
-        pygame.draw.circle(screen, (255, 0, 0), (int(p_pos.x), int(p_pos.y)), game.world_map.tile_size, 0)
+        pygame.draw.circle(screen, (255, 0, 0), (int(p_pos.x), int(p_pos.y)), ts//2, 0)
         """
         pygame.draw.polygon(screen, (255, 255, 255), game.Ship_pointlist(), 1)
         if game.thrust_counter > 9:
