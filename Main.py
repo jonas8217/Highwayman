@@ -34,18 +34,19 @@ def draw_game():
         
     
     elif game.state == 1:
+        screen.fill((100, 100, 100))
         
         p_pos = game.player.pos # position of player
-        map = game.world_map # World_map object
-        ts = map.tile_size # size of an individual tile in pixels
-        dims = game.game_dim # game_dim[0],game_dim[1] = game view size in tiles
+        map = game.world_map    # World_map object
+        ts = map.tile_size      # size of an individual tile in pixels
+        dims = game.game_dim    # game_dim[0],game_dim[1] = game view size in tiles
 
-        lB = 0 #leftBoundary
-        rB = 0 #rightBoundary
-        tB = 0 #topBoundary
-        bB = 0 #bottomBoundary
+        lB = 0 # leftBoundary
+        rB = 0 # rightBoundary
+        tB = 0 # topBoundary
+        bB = 0 # bottomBoundary
 
-        
+        # veiw boundaries
         if int(p_pos.x)//ts - dims[0]//2 < 0:
             lB = dims[0]//2 - int(p_pos.x)//ts
         if int(p_pos.x)//ts + dims[0]//2 > map.width:
@@ -55,8 +56,8 @@ def draw_game():
         if int(p_pos.y)//ts + dims[1]//2 > map.height:
             bB = int(p_pos.y)//ts + dims[1]//2 - map.height
         
-        screen.fill((100, 100, 100))
-
+        
+        # Testing veiw
         for x in range(int(p_pos.x)//ts - dims[0]//2 + lB, int(p_pos.x)//ts + dims[0]//2 - rB):
             for y in range(int(p_pos.y)//ts - dims[1]//2 + tB, int(p_pos.y)//ts + dims[1]//2 - bB):
                 pygame.draw.rect(screen, map.tiles[x][y][1], pygame.Rect(x * ts, y * ts, ts, ts))
@@ -79,7 +80,7 @@ def draw_game():
             for guard in unit.guards:
                 pygame.draw.circle(screen, (0, 0, 255), (int(unit.pos.x * ts+ guard.rel_pos.x * ts) + ts//2 , int(unit.pos.y * ts+ guard.rel_pos.y * ts) + ts//2), 2, 0)
 
-
+        # Testing player-position
         pygame.draw.circle(screen, (255, 0, 0), (int(p_pos.x), int(p_pos.y)), ts//2, 0)
         """
         pygame.draw.polygon(screen, (255, 255, 255), game.Ship_pointlist(), 1)
