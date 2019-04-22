@@ -74,8 +74,10 @@ def draw_game():
                 pygame.draw.circle(screen, city.col, (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size, 0)
                 pygame.draw.circle(screen, (city.col[0]-50, city.col[1]-50, city.col[2]-50), (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size-2, 0)
         
-        for merchant in game.merchants:
-            pygame.draw.circle(screen, (0, 255, 0), (int(merchant.pos.x) * ts + ts//2 , int(merchant.pos.y) * ts + ts//2), 3, 0)
+        for unit in game.trade_units:
+            pygame.draw.circle(screen, (0, 255, 0), (int(unit.pos.x * ts) + ts//2 , int(unit.pos.y * ts) + ts//2), 2, 0)
+            for guard in unit.guards:
+                pygame.draw.circle(screen, (0, 0, 255), (int(unit.pos.x * ts+ guard.rel_pos.x * ts) + ts//2 , int(unit.pos.y * ts+ guard.rel_pos.y * ts) + ts//2), 2, 0)
 
 
         pygame.draw.circle(screen, (255, 0, 0), (int(p_pos.x), int(p_pos.y)), ts//2, 0)

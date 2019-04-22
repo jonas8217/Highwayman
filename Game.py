@@ -3,7 +3,7 @@ from random import randint
 from highscoreLogger import Logger
 from Worldgen import World_map
 from Player import Player
-from Merchant import Merchant
+from Trade_unit import Trade_unit
 from Vector import Normalize,Vector as vect
 import pickle
 
@@ -23,7 +23,7 @@ class Game:
         
         self.player = None
 
-        self.merchants = []
+        self.trade_units = []
 
         self.escorts = []
 
@@ -50,7 +50,7 @@ class Game:
             
             # Debugging
             if pressed[pg.K_m]:
-                self.merchants.append(Merchant(self.world_map.cities[0], self.world_map.cities[1], None))
+                self.trade_units.append(Trade_unit(self.world_map.cities[0], self.world_map.cities[1], None, 6))
 
             # Movement
             # Player
@@ -66,9 +66,12 @@ class Game:
             if (0 < int(next_pos.x) < self.world_map.width * ts) and (0 < int(next_pos.y) < self.world_map.height * ts):
                 self.player.move(p_vel, speed_modifier)
 
-            #Merchants
-            for merchant in self.merchants:
-                merchant.move()
+            #Trade_units
+            for unit in self.trade_units:
+                pos = None
+                if dist((int(p_pos.x)//ts, int(p_pos.y)//ts), unit.pos) < unit.detect_dist:
+                   pos = vect(p_pos.x//ts, p_pos.y//ts) 
+                unit.move(pos)
 
     
 
@@ -172,6 +175,10 @@ class Game:
         if self.state == 1:
             self.state = 3
     """
+
+def dist(P1, P2):
+    # Returns distance between 2 points
+    return sqrt(((P1[0] - P2[0])**2) + ((P1[1] - P2[1])**2))
 
 """
 def mapFromTo(x, a, b, c, d):

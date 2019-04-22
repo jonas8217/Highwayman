@@ -94,9 +94,9 @@ class World_map:
         for un in unfound:
             s_dist = shortets_dist(dists)
             if self.uninterrupted_path(s_dist):
-                connections[-1].append(s_dist)        # Append to new connection to connections
-                unfound.pop(unfound.index(s_dist[0])) # and
-                unfound.pop(unfound.index(s_dist[1])) # Remove now found cities
+                connections[-1].append(s_dist)  # Append to new connection to connections
+                unfound.remove(s_dist[0])       # and
+                unfound.remove(s_dist[1])       # Remove now found cities
                 break
             
             else:
@@ -117,12 +117,12 @@ class World_map:
 
             s_dist = shortets_dist(cons)
             if s_dist is not None:
-                connections[-1].append(s_dist)          # Add new connection
+                connections[-1].append(s_dist)  # Add new connection
 
-                i = 0                                   # Delete city from unfound 
-                if s_dist[1] in unfound:                #
-                    i = 1                               #
-                unfound.pop(unfound.index(s_dist[i]))   #
+                i = 0                           # Delete city from unfound 
+                if s_dist[1] in unfound:        #
+                    i = 1                       #
+                unfound.remove(s_dist[i])       #
             
             
             elif len(unfound) > 1:
@@ -135,9 +135,9 @@ class World_map:
                 s_dist = shortets_dist(cons)
                 if s_dist is not None:
 
-                    connections[-1].append(s_dist)        # Add to new connection to connections
-                    unfound.pop(unfound.index(s_dist[0])) # and
-                    unfound.pop(unfound.index(s_dist[1])) # Remove now found cities
+                    connections[-1].append(s_dist)  # Add to new connection to connections
+                    unfound.remove(s_dist[0])       # and
+                    unfound.remove(s_dist[1])       # Remove now found cities
                 
                 else:
                     unfound[:] = []
