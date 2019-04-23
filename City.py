@@ -10,7 +10,7 @@ class City:
         r = []
         for i in range(ceil((self.size-9)/2)):
             r.append(randint(0,2))
-        self.resources = [r.count(0),r.count(1),r.count(2)]
+        self.resources = (r.count(0),r.count(1),r.count(2))
 
 
     def __repr__(self): #For debugging purposes

@@ -5,6 +5,7 @@ from Worldgen import World_map
 from Player import Player
 from Trade_unit import Trade_unit
 from Vector import Normalize,Vector as vect
+from Dist import dist
 import pickle
 
 
@@ -67,11 +68,18 @@ class Game:
                 self.player.move(p_vel, speed_modifier)
 
             #Trade_units
+            to_pop = []
             for unit in self.trade_units:
-                pos = None
-                if dist((int(p_pos.x)//ts, int(p_pos.y)//ts), unit.pos) < unit.detect_dist:
-                   pos = vect(p_pos.x//ts, p_pos.y//ts) 
-                unit.move(pos)
+                if dist(unit.pos, unit.end_city.pos) < 1 * ts:
+                    to_pop.append(unit)
+                else:
+                    pos = None
+                    if dist((int(p_pos.x)//ts, int(p_pos.y)//ts), unit.pos) < unit.detect_dist:
+                        pos = vect(p_pos.x//ts, p_pos.y//ts) 
+                    unit.move(pos)
+            
+            for unit in to_pop[::-1]:
+                self.trade_units.remove(unit)
 
     
 
@@ -175,10 +183,6 @@ class Game:
         if self.state == 1:
             self.state = 3
     """
-
-def dist(P1, P2):
-    # Returns distance between 2 points
-    return sqrt(((P1[0] - P2[0])**2) + ((P1[1] - P2[1])**2))
 
 """
 def mapFromTo(x, a, b, c, d):

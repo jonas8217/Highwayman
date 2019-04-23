@@ -1,6 +1,7 @@
 import pygame
 import pygame_textinput
 from math import sqrt
+from Dist import dist
 from Game import Game
 
 def draw_game():
@@ -71,7 +72,7 @@ def draw_game():
                 pygame.draw.line(screen, (209, 147, 54), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), ts)
         
         for city in map.cities:
-            if sqrt(((city.pos[0] - p_pos[0]//ts)**2) + ((city.pos[1] - p_pos[1]//ts)**2)) < sqrt((dims[0]//2)**2 + (dims[1]//2)) + city.size:
+            if dist(city.pos, (p_pos.x//ts, p_pos.y//ts)) < sqrt((dims[0]//2)**2 + (dims[1]//2)) + city.size:
                 pygame.draw.circle(screen, city.col, (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size, 0)
                 pygame.draw.circle(screen, (city.col[0]-50, city.col[1]-50, city.col[2]-50), (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size-2, 0)
         
@@ -82,6 +83,7 @@ def draw_game():
 
         # Testing player-position
         pygame.draw.circle(screen, (255, 0, 0), (int(p_pos.x), int(p_pos.y)), ts//2, 0)
+        
         """
         pygame.draw.polygon(screen, (255, 255, 255), game.Ship_pointlist(), 1)
         if game.thrust_counter > 9:
@@ -141,8 +143,6 @@ def draw_game():
             game.save_highscore(game.textinput.get_text())
         """
 
-def dist(P1,P2):
-    return sqrt(((P1[0] - P2[0])**2) + ((P1[1] - P2[1])**2))
 
 pygame.init()
 """
