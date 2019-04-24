@@ -70,12 +70,15 @@ def draw_game():
             if dist(PMid, (p_pos[0]//ts, p_pos[1]//ts)) < sqrt((dims[0]//2)**2 + (dims[1]//2)**2) + roadlen/2:
                 pygame.draw.line(screen, (181, 103, 36), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), int(ts * 1.5))
                 pygame.draw.line(screen, (209, 147, 54), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), ts)
-        
+
+        font_size = myfont.size('2')
         for city in map.cities:
             if dist(city.pos, (p_pos.x//ts, p_pos.y//ts)) < sqrt((dims[0]//2)**2 + (dims[1]//2)) + city.size:
                 pygame.draw.circle(screen, city.col, (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size, 0)
                 pygame.draw.circle(screen, (city.col[0]-50, city.col[1]-50, city.col[2]-50), (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size-2, 0)
-        
+                screen.blit(myfont.render(str(city.resources[0]), 1, (255, 255, 0)), (city.pos[0] * ts + ts//2 - 5 - font_size[0]/2, city.pos[1] * ts + ts//2 - font_size[1]/2))
+                screen.blit(myfont.render(str(city.resources[1]), 1, (0, 255, 0)), (city.pos[0] * ts + ts//2 + 5 - font_size[0]/2, city.pos[1] * ts + ts//2 - font_size[1]/2))
+
         for unit in game.trade_units:
             pygame.draw.circle(screen, (0, 255, 0), (int(unit.pos.x * ts) + ts//2 , int(unit.pos.y * ts) + ts//2), 2, 0)
             for guard in unit.guards:
@@ -93,19 +96,15 @@ def draw_game():
         game.thrust_counter += 1
         """
 
-        """
-        if len(game.astr) > 0:
-            for i in range(len(game.astr)):
-                pygame.draw.circle(screen, (255, 255, 255), (int(game.astr[i].x), int(game.astr[i].y)), game.astr[i].size * 10, 2)
-        if len(game.pjct) > 0:
-            for i in range(len(game.pjct)):
-                pygame.draw.circle(screen, (255, 255, 255), (int(game.pjct[i].x), int(game.pjct[i].y)), 2, 0)
-        """
-        """
-        screen.blit(myfont.render("Points: {}".format(game.points), 1, (255, 255, 0)), (20, 20))
-        screen.blit(myfont.render("Shield: {}".format(game.shield), 1, (255, 255, 0)), (20, 35))
-        screen.blit(myfont.render("Stage: {}".format(game.stage), 1, (255, 255, 0)), (20, 50))
-        """
+        
+        # Hud
+        
+        screen.blit(myfont.render("Gold: {}".format(game.player.gold), 1, (0, 0, 0)), (20, 35))
+        screen.blit(myfont.render("Provsions: {}".format(game.player.provisions), 1, (0, 0, 0)), (20, 20))
+        #screen.blit(myfont.render("Materials: {}".format(game.player.materials), 1, (0, 0, 0)), (20, 50))
+        
+        # Health
+
 
     elif game.state == 2:
         pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(w//2 - 40, h//2 - 20, 80, 40))

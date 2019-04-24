@@ -7,7 +7,7 @@ from Trade_unit import Trade_unit
 from Vector import Normalize,Vector as vect
 from Dist import dist
 import pickle
-
+from time import time
 
 
 
@@ -28,6 +28,11 @@ class Game:
 
         self.escorts = []
 
+        # Reference times
+        self.eat_ref_time = time()
+        self.ref_time = time()
+
+
     def tick(self, pg, pressed):
         if self.state == 0.5:
             if pressed[pg.K_r]:
@@ -35,8 +40,8 @@ class Game:
         
         if self.state == 1:
 
-            #Controls input
-            #Player
+            # Controls input
+            # Player
             p_vel = vect(0, 0)
             if pressed[pg.K_UP]:
                 p_vel += vect(0, -1)
@@ -51,7 +56,7 @@ class Game:
             
             # Debugging
             if pressed[pg.K_m]:
-                self.trade_units.append(Trade_unit(self.world_map.cities[0], self.world_map.cities[1], None, 6))
+                self.trade_units.append(Trade_unit(self.world_map.cities[0], self.world_map.cities[1], None))
 
             # Movement
             # Player
@@ -63,11 +68,11 @@ class Game:
             
             next_pos = p_pos + p_vel * speed_modifier * self.player.speed
 
-            #stops player from moving outside the world
+            # Stops player from moving outside the world
             if (0 < int(next_pos.x) < self.world_map.width * ts) and (0 < int(next_pos.y) < self.world_map.height * ts):
                 self.player.move(p_vel, speed_modifier)
 
-            #Trade_units
+            # Trade_units
             to_pop = []
             for unit in self.trade_units:
                 if dist(unit.pos, unit.end_city.pos) < 1 * ts:
@@ -80,6 +85,15 @@ class Game:
             
             for unit in to_pop[::-1]:
                 self.trade_units.remove(unit)
+
+            # Timed events
+            if time() - self.eat_ref_time > 30:
+                if self.player.provisions > 0:
+                    self.player.provisions -= 1
+                else:
+                    self.death()
+                self.eat_ref_time = time()
+
 
     
 
@@ -177,6 +191,15 @@ class Game:
             #self.scores = self.get_highscores()[:10]
         elif self.state == 2:
             self.state = 1
+
+    def death(self):
+        if self.state == 1:
+            self.reset()
+            self.end_game()
+    
+    def reset(self):
+        pass
+
 
     """
     def highscore_input(self):
