@@ -1,10 +1,10 @@
-from math import pi, cos, sin, sqrt
+from math import pi, cos, sin, sqrt, ceil
 from random import randint
 from highscoreLogger import Logger
 from Worldgen import World_map
 from Player import Player
 from Trade_unit import Trade_unit
-from Vector import Normalize,Vector as vect
+from Vector import Normalize, Vector as vect
 from Dist import dist
 import pickle
 from time import time
@@ -30,7 +30,7 @@ class Game:
 
         # Reference times
         self.eat_ref_time = time()
-        self.ref_time = time()
+        self.merchant_spawn_ref_time = time()
 
 
     def tick(self, pg, pressed):
@@ -87,15 +87,25 @@ class Game:
                 self.trade_units.remove(unit)
 
             # Timed events
+            # Player
             if time() - self.eat_ref_time > 30:
                 if self.player.provisions > 0:
                     self.player.provisions -= 1
                 else:
                     self.death()
                 self.eat_ref_time = time()
+            
+            # Cities
+            if time() - self.merchant_spawn_ref_time > 20:
+                self.spawn_unit()
+                self.merchant_spawn_ref_time = time()
 
 
-    
+    def spawn_unit(self):
+        weight_list = []
+        for city in self.world_map.cities:
+            ceil((city.size-9)/2)
+
 
     def generate_world(self, w, h, tile_size=4, seed=randint(1, 500), size=1):
         self.world_map = World_map(w, h, tile_size, seed, size)
