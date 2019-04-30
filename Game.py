@@ -96,16 +96,30 @@ class Game:
                 self.eat_ref_time = time()
             
             # Cities
-            if time() - self.merchant_spawn_ref_time > 20:
-                self.spawn_unit()
+            if time() - self.merchant_spawn_ref_time > 3: # timing is temporary #TODO
+                self.spawn_trade_unit()
                 self.merchant_spawn_ref_time = time()
 
 
-    def spawn_unit(self):
-        weight_list = []
+    def spawn_trade_unit(self):
+        city_list = []
         for city in self.world_map.cities:
-            ceil((city.size-9)/2)
+            for i in range(ceil(city.weight/2)):
+                if (len(city.roads) > 0) and (city.weight > 0):
+                    city_list.append(city)
+        
+        start_city = city_list[randint(0,len(city_list) - 1)]
+        end_city = start_city.roads[randint(0,len(start_city.roads) - 1)]
 
+        cargo_size = randint(1, ceil(start_city.weight/2))
+        cargo = [0,0,0]
+        for i in range(cargo_size):
+            item = start_city.resources[randint(0,len(start_city.resources) - 1)]
+            cargo[item] += 1
+        
+        guards = randint(0, cargo_size - 1) + randint(0, ceil(start_city.weight/2) - 1)
+
+        self.trade_units.append(Trade_unit(start_city, end_city, cargo, guards))
 
     def generate_world(self, w, h, tile_size=4, seed=randint(1, 500), size=1):
         self.world_map = World_map(w, h, tile_size, seed, size)

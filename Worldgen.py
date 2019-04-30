@@ -149,6 +149,8 @@ class World_map:
         for con in connections:                             # Create road objects and add to self.roads
             for c in con:                                   #
                 self.roads.append(Road(c[0], c[1], c[2]))   #
+                self.cities[self.cities.index(c[0])].roads.append(c[1]) # Give cities connected cities as "roads"
+                self.cities[self.cities.index(c[1])].roads.append(c[0]) #
         
     def uninterrupted_path(self, dis):
         c1pos, c2pos = dis[0].pos, dis[1].pos

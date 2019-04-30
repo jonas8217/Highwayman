@@ -29,8 +29,8 @@ def draw_game():
             pygame.draw.line(screen, (181, 103, 36), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), int(ts * 2))
             pygame.draw.line(screen, (209, 147, 54), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), ts)
         for city in map.cities:
-            pygame.draw.circle(screen, city.col, (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size, 0)
-            pygame.draw.circle(screen, (city.col[0]-50, city.col[1]-50, city.col[2]-50), (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size-2, 0)
+            pygame.draw.circle(screen, city.color, (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size, 0)
+            pygame.draw.circle(screen, (city.color[0]-50, city.color[1]-50, city.color[2]-50), (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size-2, 0)
         
         
     
@@ -76,10 +76,10 @@ def draw_game():
         font_size = myfont.size('2')
         for city in map.cities:
             if dist(city.pos, (p_pos.x//ts, p_pos.y//ts)) < sqrt((dims[0]//2)**2 + (dims[1]//2)) + city.size:
-                pygame.draw.circle(screen, city.col, (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size, 0)
-                pygame.draw.circle(screen, (city.col[0]-50, city.col[1]-50, city.col[2]-50), (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size-2, 0)
-                screen.blit(myfont.render(str(city.resources[0]), 1, (255, 255, 0)), (city.pos[0] * ts + ts//2 - 5 - font_size[0]/2, city.pos[1] * ts + ts//2 - font_size[1]/2))
-                screen.blit(myfont.render(str(city.resources[1]), 1, (0, 255, 0)), (city.pos[0] * ts + ts//2 + 5 - font_size[0]/2, city.pos[1] * ts + ts//2 - font_size[1]/2))
+                pygame.draw.circle(screen, city.color, (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size, 0)
+                pygame.draw.circle(screen, (city.color[0]-50, city.color[1]-50, city.color[2]-50), (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size-2, 0)
+                screen.blit(myfont.render(str(city.sorted_resources[0]), 1, (255, 255, 0)), (city.pos[0] * ts + ts//2 - 5 - font_size[0]/2, city.pos[1] * ts + ts//2 - font_size[1]/2))
+                screen.blit(myfont.render(str(city.sorted_resources[1]), 1, (0, 255, 0)), (city.pos[0] * ts + ts//2 + 5 - font_size[0]/2, city.pos[1] * ts + ts//2 - font_size[1]/2))
 
         for unit in game.trade_units:
             pygame.draw.circle(screen, (0, 255, 0), (int(unit.pos.x * ts) + ts//2 , int(unit.pos.y * ts) + ts//2), 2, 0)
