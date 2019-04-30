@@ -73,7 +73,7 @@ def draw_game():
                 pygame.draw.line(screen, (181, 103, 36), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), int(ts * 1.5))
                 pygame.draw.line(screen, (209, 147, 54), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), ts)
 
-        font_size = myfont.size('2')
+        font_size = myfont.size(' ')
         for city in map.cities:
             if dist(city.pos, (p_pos.x//ts, p_pos.y//ts)) < sqrt((dims[0]//2)**2 + (dims[1]//2)) + city.size:
                 pygame.draw.circle(screen, city.color, (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size, 0)
@@ -101,8 +101,8 @@ def draw_game():
         
         # Hud
         
-        screen.blit(myfont.render("Gold: {}".format(game.player.gold), 1, (0, 0, 0)), (20, 35))
-        screen.blit(myfont.render("Provsions: {}".format(game.player.provisions), 1, (0, 0, 0)), (20, 20))
+        screen.blit(myfont.render("Gold: {}".format(game.player.gold), 1, (0, 0, 0)), (20, 20))
+        screen.blit(myfont.render("Provisions: {}".format(game.player.provisions), 1, (0, 0, 0)), (20, 35))
         #screen.blit(myfont.render("Materials: {}".format(game.player.materials), 1, (0, 0, 0)), (20, 50))
         
         # Health
@@ -120,9 +120,10 @@ def draw_game():
             screen.blit(myfont.render(str(j['Name']) + ': ' + str(j['Score']) + ' at ' + str(j['Stage']), 1, (255, 255, 0)), (590, 35 + i * 15))
         """
         """
+        controls = ["Controls:", "Movement: WASD", "Pause: p", "Exit Game/New Game: ESC", "Sumbmit Score: Enter"]
         pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(260, 400, 300, 120))
         screen.blit(myfont.render("Controls:", 1, (255, 255, 255)), (270, 405))
-        screen.blit(myfont.render("Thrust: Up Arrow", 1, (255, 255, 255)), (280, 420))
+        screen.blit(myfont.render("Movement: WASD", 1, (255, 255, 255)), (280, 420))
         screen.blit(myfont.render("Turn: Left and Right Arrows", 1, (255, 255, 255)), (280, 435))
         screen.blit(myfont.render("Shoot: Spacebar", 1, (255, 255, 255)), (280, 450))
         screen.blit(myfont.render("Pause: p", 1, (255, 255, 255)), (280, 465))
