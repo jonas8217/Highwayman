@@ -59,9 +59,11 @@ def draw_game():
         
         
         # Testing veiw
+        
         for x in range(int(p_pos.x)//ts - dims[0]//2 + lB, int(p_pos.x)//ts + dims[0]//2 - rB):
             for y in range(int(p_pos.y)//ts - dims[1]//2 + tB, int(p_pos.y)//ts + dims[1]//2 - bB):
                 pygame.draw.rect(screen, map.tiles[x][y][1], pygame.Rect(x * ts, y * ts, ts, ts))
+        
         
         for road in map.roads:
             P1, P2 = road.P1, road.P2
