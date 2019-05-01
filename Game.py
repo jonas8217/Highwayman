@@ -16,7 +16,7 @@ class Game:
         self.state = 0
 
         self.world_map = None
-        self.game_scale = 10
+        self.game_scale = 5
 
         self.world_dim = (200,150)
 

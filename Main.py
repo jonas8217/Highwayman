@@ -37,17 +37,19 @@ def draw_game():
     elif game.state == 1:
         screen.fill((100, 100, 100))
         
-        p_pos = game.player.pos # position of player
+        # Declaring shorter variabels for later use
+        p_pos = game.player.pos # Position of player
         map = game.world_map    # World_map object
-        ts = map.tile_size      # size of an individual tile in pixels
-        dims = game.game_dim    # game_dim[0],game_dim[1] = game view size in tiles
+        ts = map.tile_size      # Size of an individual tile in pixels
+        dims = game.game_dim    # Game_dim[0],game_dim[1] = game view size in tiles
+        S = game.game_scale     # Difference in scale between world and view size
 
-        lB = 0 # leftBoundary
-        rB = 0 # rightBoundary
-        tB = 0 # topBoundary
-        bB = 0 # bottomBoundary
+        lB = 0 # LeftBoundary
+        rB = 0 # RightBoundary
+        tB = 0 # TopBoundary
+        bB = 0 # BottomBoundary
 
-        # veiw boundaries
+        # Veiw boundaries
         if int(p_pos.x)//ts - dims[0]//2 < 0:
             lB = dims[0]//2 - int(p_pos.x)//ts
         if int(p_pos.x)//ts + dims[0]//2 > map.width:
@@ -59,10 +61,10 @@ def draw_game():
         
         
         # Testing veiw
-        
-        for x in range(int(p_pos.x)//ts - dims[0]//2 + lB, int(p_pos.x)//ts + dims[0]//2 - rB):
-            for y in range(int(p_pos.y)//ts - dims[1]//2 + tB, int(p_pos.y)//ts + dims[1]//2 - bB):
-                pygame.draw.rect(screen, map.tiles[x][y][1], pygame.Rect(x * ts, y * ts, ts, ts))
+        S = w//dims[0]
+        for x, i in enumerate(range(int(p_pos.x)//ts - dims[0]//2 + lB, int(p_pos.x)//ts + dims[0]//2 - rB)):
+            for y, j in enumerate(range(int(p_pos.y)//ts - dims[1]//2 + tB, int(p_pos.y)//ts + dims[1]//2 - bB)):
+                pygame.draw.rect(screen, map.tiles[i][j][1], pygame.Rect(- (p_pos.x - dims[0]) + x * ts * S, - (p_pos.y - dims[1]) + y * ts * S, ts * S, ts * S))
         
         
         for road in map.roads:
@@ -155,7 +157,7 @@ pygame.display.set_icon(icon)
 """
 pygame.display.set_caption('highwayman')
 screen = pygame.display.set_mode((800, 600))
-# initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
+# Initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
 myfont = pygame.font.SysFont("monospace", 15)
 
 running = True
