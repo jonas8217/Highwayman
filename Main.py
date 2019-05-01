@@ -62,10 +62,14 @@ def draw_game():
         
         # Testing veiw
         S = w//dims[0]
+        for x in range(int(p_pos.x)//ts - dims[0]//2 + lB, int(p_pos.x)//ts + dims[0]//2 - rB):
+            for y in range(int(p_pos.y)//ts - dims[1]//2 + tB, int(p_pos.y)//ts + dims[1]//2 - bB):
+                pygame.draw.rect(screen, map.tiles[x][y][1], pygame.Rect(x * ts, y * ts, ts, ts))
+        """
         for x, i in enumerate(range(int(p_pos.x)//ts - dims[0]//2 + lB, int(p_pos.x)//ts + dims[0]//2 - rB)):
             for y, j in enumerate(range(int(p_pos.y)//ts - dims[1]//2 + tB, int(p_pos.y)//ts + dims[1]//2 - bB)):
                 pygame.draw.rect(screen, map.tiles[i][j][1], pygame.Rect(- (p_pos.x - dims[0]) + x * ts * S, - (p_pos.y - dims[1]) + y * ts * S, ts * S, ts * S))
-        
+        """
         
         for road in map.roads:
             P1, P2 = road.P1, road.P2
