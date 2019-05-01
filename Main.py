@@ -42,7 +42,7 @@ def draw_game():
         map = game.world_map    # World_map object
         ts = map.tile_size      # Size of an individual tile in pixels
         dims = game.game_dim    # Game_dim[0],game_dim[1] = game view size in tiles
-        S = game.game_scale     # Difference in scale between world and view size
+        #S = game.game_scale     # Difference in scale between world and view size
 
         lB = 0 # LeftBoundary
         rB = 0 # RightBoundary
@@ -61,7 +61,6 @@ def draw_game():
         
         
         # Testing veiw
-        S = w//dims[0]
         for x in range(int(p_pos.x)//ts - dims[0]//2 + lB, int(p_pos.x)//ts + dims[0]//2 - rB):
             for y in range(int(p_pos.y)//ts - dims[1]//2 + tB, int(p_pos.y)//ts + dims[1]//2 - bB):
                 pygame.draw.rect(screen, map.tiles[x][y][1], pygame.Rect(x * ts, y * ts, ts, ts))
