@@ -9,11 +9,10 @@ import numpy as np
 
 
 class World_map:
-    def __init__(self, w, h, tile_size, seed, size):
+    def __init__(self, w, h, seed, size):
         self.tiles = []
         self.width = w
         self.height = h
-        self.tile_size = tile_size
         self.seed = seed
         self.size = size
 

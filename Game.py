@@ -21,6 +21,7 @@ class Game:
         self.world_dim = (200,150)
 
         self.game_dim = (self.world_dim[0]//self.game_scale, self.world_dim[1]//self.game_scale)
+        self.tile_size = 4
         
         self.player = None
 
@@ -36,7 +37,7 @@ class Game:
     def tick(self, pg, pressed):
         if self.state == 0.5:
             if pressed[pg.K_r]:
-                self.generate_world(self.world_dim[0],self.world_dim[1],4,randint(1,500),3)
+                self.generate_world(self.world_dim[0],self.world_dim[1],randint(1,500),3)
         
         if self.state == 1:
 
@@ -63,13 +64,13 @@ class Game:
             p_vel = Normalize(p_vel)
             
             p_pos = self.player.pos
-            ts = self.world_map.tile_size
-            speed_modifier = self.world_map.tiles[int(p_pos.x)//ts][int(p_pos.y)//ts][2]
+            ts = self.tile_size
+            speed_modifier = self.world_map.tiles[int(p_pos.x)][int(p_pos.y)][2]
             
             next_pos = p_pos + p_vel * speed_modifier * self.player.speed
 
             # Stops player from moving outside the world
-            if (0 < int(next_pos.x) < self.world_map.width * ts) and (0 < int(next_pos.y) < self.world_map.height * ts):
+            if (0 < int(next_pos.x) < self.world_map.width) and (0 < int(next_pos.y) < self.world_map.height):
                 self.player.move(p_vel, speed_modifier)
 
             # Trade_units
@@ -121,8 +122,8 @@ class Game:
 
         self.trade_units.append(Trade_unit(start_city, end_city, cargo, guards))
 
-    def generate_world(self, w, h, tile_size=4, seed=randint(1, 500), size=1):
-        self.world_map = World_map(w, h, tile_size, seed, size)
+    def generate_world(self, w, h, seed=randint(1, 500), size=1):
+        self.world_map = World_map(w, h, seed, size)
         
 
     def place_player(self, pos):
@@ -202,7 +203,7 @@ class Game:
         if self.state == 0:
             self.state = 0.5
         
-        self.generate_world(200,150,4,randint(1,500),3)
+        self.generate_world(200,150,randint(1,500),3)
         
 
     def end_game(self):

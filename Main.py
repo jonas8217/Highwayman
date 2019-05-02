@@ -19,7 +19,7 @@ def draw_game():
     elif game.state == 0.5:
 
         map = game.world_map # World_map object
-        ts = map.tile_size # size of an individual tile in pixels
+        ts = game.tile_size # size of an individual tile in pixels
 
         screen.fill((255, 255, 255))
         for x in range(map.width):
@@ -40,9 +40,9 @@ def draw_game():
         # Declaring shorter variabels for later use
         p_pos = game.player.pos # Position of player
         map = game.world_map    # World_map object
-        ts = map.tile_size      # Size of an individual tile in pixels
+        ts = game.tile_size      # Size of an individual tile in pixels
         dims = game.game_dim    # Game_dim[0],game_dim[1] = game view size in tiles
-        #S = game.game_scale     # Difference in scale between world and view size
+        S = game.game_scale     # Difference in scale between world and view size
 
         lB = 0 # LeftBoundary
         rB = 0 # RightBoundary
@@ -50,23 +50,26 @@ def draw_game():
         bB = 0 # BottomBoundary
 
         # Veiw boundaries
-        if int(p_pos.x)//ts - dims[0]//2 < 0:
-            lB = dims[0]//2 - int(p_pos.x)//ts
-        if int(p_pos.x)//ts + dims[0]//2 > map.width:
-            rB = int(p_pos.x)//ts + dims[0]//2 - map.width
-        if int(p_pos.y)//ts - dims[1]//2 < 0:
-            tB = dims[1]//2 - int(p_pos.y)//ts
-        if int(p_pos.y)//ts + dims[1]//2 > map.height:
-            bB = int(p_pos.y)//ts + dims[1]//2 - map.height
+        if int(p_pos.x) - dims[0]//2 < 0:
+            lB = dims[0]//2 - int(p_pos.x)
+        if int(p_pos.x) + dims[0]//2 > map.width:
+            rB = int(p_pos.x) + dims[0]//2 - map.width
+        if int(p_pos.y) - dims[1]//2 < 0:
+            tB = dims[1]//2 - int(p_pos.y)
+        if int(p_pos.y) + dims[1]//2 > map.height:
+            bB = int(p_pos.y) + dims[1]//2 - map.height
         
         
         # Testing veiw
-        for x in range(int(p_pos.x)//ts - dims[0]//2 + lB, int(p_pos.x)//ts + dims[0]//2 - rB):
-            for y in range(int(p_pos.y)//ts - dims[1]//2 + tB, int(p_pos.y)//ts + dims[1]//2 - bB):
-                pygame.draw.rect(screen, map.tiles[x][y][1], pygame.Rect(x * ts, y * ts, ts, ts))
+        
+        for x in range(lB, dims[0] - rB):
+            for y in range(tB, dims[1] - bB):
+                pygame.draw.rect(screen, map.tiles[x + int(p_pos.x) - dims[0]//2][y + int(p_pos.y) - dims[0]//2][1], pygame.Rect(- int(p_pos.y)//ts + (int(p_pos.x) - dims[0]) * S + x * S, - int(p_pos.y)//ts + (int(p_pos.y) - dims[1]) * S + y * S, ts * S, ts * S))
+        
+                
         """
-        for x, i in enumerate(range(int(p_pos.x)//ts - dims[0]//2 + lB, int(p_pos.x)//ts + dims[0]//2 - rB)):
-            for y, j in enumerate(range(int(p_pos.y)//ts - dims[1]//2 + tB, int(p_pos.y)//ts + dims[1]//2 - bB)):
+        for x, i in enumerate(range(int(p_pos.x) - dims[0]//2 + lB, int(p_pos.x) + dims[0]//2 - rB)):
+            for y, j in enumerate(range(int(p_pos.y) - dims[1]//2 + tB, int(p_pos.y) + dims[1]//2 - bB)):
                 pygame.draw.rect(screen, map.tiles[i][j][1], pygame.Rect(- (p_pos.x - dims[0]) + x * ts * S, - (p_pos.y - dims[1]) + y * ts * S, ts * S, ts * S))
         """
         
@@ -74,13 +77,13 @@ def draw_game():
             P1, P2 = road.P1, road.P2
             roadlen = dist(P1, P2)
             PMid = ((P1[0] + P2[0])/2, (P1[1] + P2[1])/2)
-            if dist(PMid, (p_pos[0]//ts, p_pos[1]//ts)) < sqrt((dims[0]//2)**2 + (dims[1]//2)**2) + roadlen/2:
+            if dist(PMid, (p_pos.x, p_pos.y)) < sqrt((dims[0]//2)**2 + (dims[1]//2)**2) + roadlen/2:
                 pygame.draw.line(screen, (181, 103, 36), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), int(ts * 1.5))
                 pygame.draw.line(screen, (209, 147, 54), (road.P1[0] * ts + ts/2, road.P1[1] * ts + ts/2), (road.P2[0] * ts + ts/2, road.P2[1] * ts + ts/2), ts)
 
         font_size = myfont.size(' ')
         for city in map.cities:
-            if dist(city.pos, (p_pos.x//ts, p_pos.y//ts)) < sqrt((dims[0]//2)**2 + (dims[1]//2)) + city.size:
+            if dist(city.pos, (p_pos.x, p_pos.y)) < sqrt((dims[0]//2)**2 + (dims[1]//2)) + city.size:
                 pygame.draw.circle(screen, city.color, (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size, 0)
                 pygame.draw.circle(screen, (city.color[0]-50, city.color[1]-50, city.color[2]-50), (city.pos[0] * ts + ts//2 , city.pos[1] * ts + ts//2), city.size-2, 0)
                 screen.blit(myfont.render(str(city.sorted_resources[0]), 1, (255, 255, 0)), (city.pos[0] * ts + ts//2 - 5 - font_size[0]/2, city.pos[1] * ts + ts//2 - font_size[1]/2))
@@ -89,10 +92,10 @@ def draw_game():
         for unit in game.trade_units:
             pygame.draw.circle(screen, (0, 255, 0), (int(unit.pos.x * ts) + ts//2 , int(unit.pos.y * ts) + ts//2), 2, 0)
             for guard in unit.guards:
-                pygame.draw.circle(screen, (0, 0, 255), (int(unit.pos.x * ts+ guard.rel_pos.x * ts) + ts//2 , int(unit.pos.y * ts+ guard.rel_pos.y * ts) + ts//2), 2, 0)
+                pygame.draw.circle(screen, (0, 0, 255), (int(unit.pos.x * ts + guard.rel_pos.x * ts) + ts//2 , int(unit.pos.y * ts+ guard.rel_pos.y * ts) + ts//2), 2, 0)
 
         # Testing player-position
-        pygame.draw.circle(screen, (255, 0, 0), (int(p_pos.x), int(p_pos.y)), ts//2, 0)
+        pygame.draw.circle(screen, (255, 0, 0), (int(p_pos.x * ts), int(p_pos.y * ts)), ts//2, 0)
         
         """
         pygame.draw.polygon(screen, (255, 255, 255), game.Ship_pointlist(), 1)
@@ -150,6 +153,12 @@ def draw_game():
             game.save_highscore(game.textinput.get_text())
         """
 
+def screen_to_world(pos):
+    return (int(pos[0]/game.tile_size), int(pos[1]/game.tile_size))
+
+def world_to_screen(pos):
+    return (pos[0] * game.tile_size + game.tile_size//2, pos[1] * game.tile_size + game.tile_size//2)
+
 
 pygame.init()
 """
@@ -180,7 +189,7 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if game.state == 0.5:
                 pos = pygame.mouse.get_pos()
-                game.start_game(pos)
+                game.start_game(screen_to_world(pos))
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             if game.state != 0:
                 game.end_game()
