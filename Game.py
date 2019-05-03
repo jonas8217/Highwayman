@@ -1,4 +1,4 @@
-from math import pi, cos, sin, sqrt, ceil
+from math import pi, cos, sin, ceil
 from random import randint
 from highscoreLogger import Logger
 from Worldgen import World_map
@@ -16,18 +16,15 @@ class Game:
         self.state = 0
 
         self.world_map = None
+
         self.game_scale = 5
-
-        self.world_dim = (200,150)
-
-        self.game_dim = (self.world_dim[0]//self.game_scale, self.world_dim[1]//self.game_scale)
         self.tile_size = 4
+        self.world_dim = (200,150)
+        self.game_dim = (self.world_dim[0]//self.game_scale, self.world_dim[1]//self.game_scale)
         
         self.player = None
 
         self.trade_units = []
-
-        self.escorts = []
 
         # Reference times
         self.eat_ref_time = time()
@@ -80,8 +77,8 @@ class Game:
                     to_pop.append(unit)
                 else:
                     pos = None
-                    if dist((int(p_pos.x)//ts, int(p_pos.y)//ts), unit.pos) < unit.detect_dist:
-                        pos = vect(p_pos.x//ts, p_pos.y//ts) 
+                    if dist((int(p_pos.x), int(p_pos.y)), unit.pos) < unit.detect_dist:
+                        pos = vect(p_pos.x, p_pos.y) 
                     unit.move(pos)
             
             for unit in to_pop[::-1]:
