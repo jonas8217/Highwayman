@@ -4,7 +4,7 @@ from Vector_to_radians import vect_to_rad
 class Player:
     def __init__(self, x, y):
         self.pos = vect(x, y)
-        self.speed = 2
+        self.speed = 0.5
         self.hit_points = 20
         self.damage = 4
         self.saturation = 10

@@ -11,7 +11,7 @@ class Trade_unit():
         self.cargo = cargo
         self.speed = 0.1
         self.hit_points = 10
-        self.detect_dist = 7
+        self.detect_dist = 12
         
         self.vel = Normalize(e_pos - s_pos)
         self.guards = []

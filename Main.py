@@ -45,6 +45,7 @@ def draw_game():
         S = game.game_scale     # Difference in scale between world and view size
 
         world_to_screen = lambda pos : (int(((pos[0] - p_pos.x + dims[0]//2) * ts + ts//2) * S), int(((pos[1] - p_pos.y + dims[1]//2) * ts + ts//2) * S))
+        
 
         lB = 0 # LeftBoundary
         rB = 0 # RightBoundary
@@ -66,7 +67,7 @@ def draw_game():
         # Map
         for x in range(lB, w//(ts*S) - rB):
             for y in range(tB, h//(ts*S) - bB):
-                pygame.draw.rect(screen, map.tiles[int(p_pos.x) - dims[0]//2 + x][int(p_pos.y) - dims[1]//2 + y][1], pygame.Rect(x * ts * S, 20 + y * ts  * S, ts * S, ts * S))
+                pygame.draw.rect(screen, map.tiles[int(p_pos.x) - dims[0]//2 + x][int(p_pos.y) - dims[1]//2 + y][1], pygame.Rect(x * ts * S, y * ts  * S, ts * S, ts * S))
         
         # Roads
         for road in map.roads:
@@ -75,8 +76,8 @@ def draw_game():
             PMid = ((P1[0] + P2[0])/2, (P1[1] + P2[1])/2)
             if dist(PMid, (p_pos.x, p_pos.y)) < sqrt((dims[0]//2)**2 + (dims[1]//2)**2) + roadlen/2:
                 RP1_pos,RP2_pos  = world_to_screen(road.P1), world_to_screen(road.P2)
-                pygame.draw.line(screen, (181, 103, 36), RP1_pos, RP2_pos, int(ts * 1.5) * S)
-                pygame.draw.line(screen, (209, 147, 54), RP1_pos, RP2_pos, ts * S)
+                pygame.draw.line(screen, (181, 103, 36), RP1_pos, RP2_pos, ts * S)
+                pygame.draw.line(screen, (209, 147, 54), RP1_pos, RP2_pos, int(ts * S/2))
 
         font_size = big_font.size(' ')
         for city in map.cities:
@@ -85,17 +86,19 @@ def draw_game():
                 c_pos = world_to_screen(city.pos)
                 pygame.draw.circle(screen, city.color, c_pos, city.size * S, 0)
                 pygame.draw.circle(screen, darker_col, c_pos, (city.size-2) * S, 0)
-                screen.blit(big_font.render(str(city.sorted_resources[0]), 1, (255, 255, 0)), (c_pos[0] - 15 - font_size[0]/2, c_pos[1] - font_size[1]/2))
-                screen.blit(big_font.render(str(city.sorted_resources[1]), 1, (  0, 255, 0)), (c_pos[0] + 15 - font_size[0]/2, c_pos[1] - font_size[1]/2))
+                screen.blit(big_font.render(str(city.sorted_resources[0]), 1, (255, 255, 0)), (c_pos[0] - int(S * city.size/3) - font_size[0]/2, c_pos[1] - font_size[1]/2))
+                screen.blit(big_font.render(str(city.sorted_resources[1]), 1, (  0, 255, 0)), (c_pos[0] + int(S * city.size/3) - font_size[0]/2, c_pos[1] - font_size[1]/2))
 
         for unit in game.trade_units:
-            pygame.draw.circle(screen, (0, 255, 0), (int(unit.pos.x * ts) + ts//2 , int(unit.pos.y * ts) + ts//2), 2, 0)
+            unit_pos = world_to_screen(unit.pos)
+            pygame.draw.circle(screen, (0, 255, 0), unit_pos, 2 * S, 0)
             for guard in unit.guards:
-                pygame.draw.circle(screen, (0, 0, 255), (int(unit.pos.x * ts + guard.rel_pos.x * ts) + ts//2 , int(unit.pos.y * ts+ guard.rel_pos.y * ts) + ts//2), 2, 0)
+                guard_pos = world_to_screen(guard.rel_pos + unit.pos)
+                pygame.draw.circle(screen, (0, 0, 255), guard_pos, 2 * S, 0)
         
         # Player
         #pygame.draw.circle(screen, (255, 0, 0), (int(p_pos.x * ts), int(p_pos.y * ts)), ts//2, 0)
-        pygame.draw.circle(screen, (255, 0, 0), (w//2, h//2), S * ts//2, 0)
+        pygame.draw.circle(screen, (255, 0, 0), (w//2 + S * ts//2, h//2 + S * ts//2), S * ts//2, 0)
 
         """
         pygame.draw.polygon(screen, (255, 255, 255), game.Ship_pointlist(), 1)
@@ -168,7 +171,7 @@ pygame.display.set_caption('highwayman')
 screen = pygame.display.set_mode((800, 600))
 # Initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
 small_font = pygame.font.SysFont("monospace", 15)
-big_font = pygame.font.SysFont("monospace", 30)
+big_font = pygame.font.SysFont("monospace", 45)
 
 running = True
 
