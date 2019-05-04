@@ -1,4 +1,4 @@
-from math import pi, cos, sin, ceil
+from math import ceil
 from random import randint
 from highscoreLogger import Logger
 from Worldgen import World_map
@@ -7,12 +7,15 @@ from Trade_unit import Trade_unit
 from Vector import Normalize, Vector as vect
 from Dist import dist
 import pickle
+from highscoreLogger import Logger
 from time import time
 
 
 
 class Game:
     def __init__(self):
+        self.logger = Logger()
+
         self.state = 0
 
         self.world_map = None
@@ -25,10 +28,17 @@ class Game:
         self.player = None
 
         self.trade_units = []
+        
 
         # Reference times
+        self.game_time = 0
+        self.game_ref_time = time()
         self.eat_ref_time = time()
         self.merchant_spawn_ref_time = time()
+
+        # Highscores
+        self.scores = self.get_highscores()[:10]
+        self.localScores = self.get_local_highscores()[:5]
 
 
     def tick(self, pg, pressed):
@@ -62,6 +72,7 @@ class Game:
             
             p_pos = self.player.pos
             ts = self.tile_size
+            S = self.game_scale
             speed_modifier = self.world_map.tiles[int(p_pos.x)][int(p_pos.y)][2]
             
             next_pos = p_pos + p_vel * speed_modifier * self.player.speed
@@ -83,10 +94,14 @@ class Game:
             
             for unit in to_pop[::-1]:
                 self.trade_units.remove(unit)
+            # Time Stuff
+
+            self.game_time = time() - self.game_ref_time
 
             # Timed events
             # Player
-            if time() - self.eat_ref_time > 30:
+            if time() - self.eat_ref_time > 3:
+                self.player.gold += 1
                 if self.player.provisions > 0:
                     self.player.provisions -= 1
                 else:
@@ -126,24 +141,24 @@ class Game:
     def place_player(self, pos):
         self.player = Player(pos[0], pos[1])
 
-    """
+    
     def save_highscore(self, name):
         #Pickle database
 
         try:
             with open('highscore.txt', 'rb') as f:
-                scores = pickle.load(f)  #score = {'Name':'','Score':0,'Stage':0} layout of stored indexes
+                scores = pickle.load(f)  #score = {'Name':'','Gold':0,'Time':0} layout of stored indexes
         except:
             print('No Scorefile, creating score file')
-            score = {'Name': '', 'Score': 0, 'Stage': 0}
+            score = {'Name': '', 'Gold': 0, 'Time': 0}
             scores = []
             for i in range(5):
                 scores.append(score)
             with open('highscore.txt', 'wb') as f:
                 pickle.dump(scores, f)
         for i in range(len(scores)):
-            if self.points > scores[i]['Score']:
-                newHigh = {'Name': str(name), 'Score': self.points, 'Stage': self.stage}
+            if self.player.gold > scores[i]['Gold']:
+                newHigh = {'Name': str(name), 'Gold': self.player.gold, 'Time': self.game_time}
                 scores.insert(i, newHigh)
                 break
         scores = scores[:5]
@@ -154,25 +169,26 @@ class Game:
 
 
         #online database
-        if self.points > 0:
-            self.logger.post_score('Highwayman', self.points, str(name), self.stage)
+        if self.player.gold > 0:
+            self.logger.post_score('Highwayman', self.player.gold, str(name), self.game_time)
 
         scores = []
         try:
             for s in self.logger.get_scores('Highwayman'):
-                scores.append({'Name': s['Opt1'], 'Score': s['Score'], 'Stage': s['Opt2']})
-            scores = sorted(scores, key=lambda scores: scores['Score'], reverse=True)
+                scores.append({'Name': s['Opt1'], 'Gold': s['Gold'], 'Time': s['Opt2']})
+            scores = sorted(scores, key=lambda scores: scores['Gold'], reverse=True)
         except:
             print('server database error')
 
-        self.reload()
+        self.reset()
+        self.end_game()
 
     def get_highscores(self):
         scores = []
         try:
             for s in self.logger.get_scores('Highwayman'):
-                scores.append({'Name': s['Opt1'], 'Score': s['Score'], 'Stage': s['Opt2']})
-            return sorted(scores, key=lambda scores: scores['Score'], reverse=True)
+                scores.append({'Name': s['Opt1'], 'Gold': s['Gold'], 'Time': s['Opt2']})
+            return sorted(scores, key=lambda scores: scores['Gold'], reverse=True)
         except:
             print('server database error')
             return []
@@ -180,17 +196,17 @@ class Game:
     def get_local_highscores(self):
         try:
             with open('highscore.txt', 'rb') as f:
-                scores = pickle.load(f)  #score = {'name':'','score':0,'stage':0}
+                scores = pickle.load(f)  #score = {'name':'','score':0,'Time':0}
         except:
             print('No Scorefile, creating score file')
-            score = {'Name': '', 'Score': 0, 'Stage': 0}
+            score = {'Name': '', 'Gold': 0, 'Time': 0}
             scores = []
             for i in range(5):
                 scores.append(score)
             with open('highscore.txt', 'wb') as f:
                 pickle.dump(scores, f)
         return scores
-    """
+    
     def start_game(self, pos):
         if self.state == 0.5:
             self.place_player(pos)
@@ -210,38 +226,26 @@ class Game:
     def toggle_pause(self):
         if self.state == 1:
             self.state = 2
-            #self.scores = self.get_highscores()[:10]
+            self.scores = self.get_highscores()[:10]
         elif self.state == 2:
             self.state = 1
-
-    def death(self):
-        if self.state == 1:
-            self.reset()
-            self.end_game()
     
-    def reset(self):
-        pass
-
-
-    """
     def highscore_input(self):
         if self.state == 1:
             self.state = 3
-    """
 
-"""
-def mapFromTo(x, a, b, c, d):
-    y = (x - a) / (b - a) * (d - c) + c
-    return y
+    def death(self):
+        if self.state == 1:
+            self.highscore_input()
+    
+    def reset(self):
+        self.player = None
+        self.trade_units[:] = []
+        self.scores = self.get_highscores()[:10]
+        self.localScores = self.get_local_highscores()[:5]
 
 
-def uniq(lst):
-    seen = set()
-    uniq = []
-    for x in lst:
-        if x not in seen:
-            uniq.append(x)
-            seen.add(x)
-    uniq.sort()
-    return uniq
-"""
+    
+    
+    
+

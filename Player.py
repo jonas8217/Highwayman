@@ -16,6 +16,7 @@ class Player:
 
     def move (self, vel, speed_modifier = 1):
         self.pos += vel * self.speed * speed_modifier
-        self.rotation = vect_to_rad(vel)
+        if not (vel[0] == 0 and vel[1] == 0):
+            self.rotation = vect_to_rad(vel)
 
     

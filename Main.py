@@ -1,6 +1,6 @@
 import pygame
 import pygame_textinput
-from math import sqrt
+from math import sqrt, cos, sin, pi
 from Dist import dist
 from Game import Game
 
@@ -38,14 +38,14 @@ def draw_game():
         screen.fill((100, 100, 100))
         
         # Declaring shorter variabels for later use
-        p_pos = game.player.pos # Position of player
+        player = game.player    # Player object
+        p_pos = player.pos      # Position of player
         map = game.world_map    # World_map object
-        ts = game.tile_size      # Size of an individual tile in pixels
+        ts = game.tile_size     # Size of an individual tile in pixels
         dims = game.game_dim    # Game_dim[0],game_dim[1] = game view size in tiles
         S = game.game_scale     # Difference in scale between world and view size
 
         world_to_screen = lambda pos : (int(((pos[0] - p_pos.x + dims[0]//2) * ts + ts//2) * S), int(((pos[1] - p_pos.y + dims[1]//2) * ts + ts//2) * S))
-        
 
         lB = 0 # LeftBoundary
         rB = 0 # RightBoundary
@@ -97,8 +97,10 @@ def draw_game():
                 pygame.draw.circle(screen, (0, 0, 255), guard_pos, 2 * S, 0)
         
         # Player
-        #pygame.draw.circle(screen, (255, 0, 0), (int(p_pos.x * ts), int(p_pos.y * ts)), ts//2, 0)
         pygame.draw.circle(screen, (255, 0, 0), (w//2 + S * ts//2, h//2 + S * ts//2), S * ts//2, 0)
+        p_rot = player.rotation
+        pygame.draw.circle(screen, (255, 255, 255), (int(w//2 + S * ts//2 + cos(p_rot - pi/6) * S * ts//3), int(h//2 + S * ts//2 + sin(p_rot - pi/6) * S * ts//3)), int(S * ts//6), 0)
+        pygame.draw.circle(screen, (255, 255, 255), (int(w//2 + S * ts//2 + cos(p_rot + pi/6) * S * ts//3), int(h//2 + S * ts//2 + sin(p_rot + pi/6) * S * ts//3)), int(S * ts//6), 0)
 
         """
         pygame.draw.polygon(screen, (255, 255, 255), game.Ship_pointlist(), 1)
@@ -124,12 +126,12 @@ def draw_game():
         screen.blit(small_font.render("PAUSE", 1, (255, 255, 255)), (377, 291))
 
     if game.state == 2 or game.state == 0:
-        """
+        
         pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(570, 10, 210, 40 + 15 * len(game.scores)))
         screen.blit(small_font.render("Highscores:", 1, (255, 255, 0)), (590, 20))
         for i, j in enumerate(game.scores):
-            screen.blit(small_font.render(str(j['Name']) + ': ' + str(j['Score']) + ' at ' + str(j['Stage']), 1, (255, 255, 0)), (590, 35 + i * 15))
-        """
+            screen.blit(small_font.render(str(j['Name']) + ': ' + str(j['Gold']) + ' at ' + str(j['Time']), 1, (255, 255, 0)), (590, 35 + i * 15))
+        
         """
         controls = ["Controls:", "Movement: WASD", "Pause: p", "Exit Game/New Game: ESC", "Sumbmit Score: Enter"]
         pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(260, 400, 300, 120))
@@ -141,23 +143,26 @@ def draw_game():
         screen.blit(small_font.render("Exit Game/New Game: ESC", 1, (255, 255, 255)), (280, 480))
         screen.blit(small_font.render("Sumbmit Score: Enter", 1, (255, 255, 255)), (280, 495))
         """
-        """
+        
         pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(570, 400, 210, 30 + 15 * len(game.localScores)))
         screen.blit(small_font.render("Local Highscores:", 1, (255, 255, 0)), (590, 405))
         for i, j in enumerate(game.localScores):
-            screen.blit(small_font.render(str(j['Name']) + ': ' + str(j['Score']) + ' at ' + str(j['Stage']), 1, (255, 255, 0)), (590, 420 + i * 15))
-        """
+            screen.blit(small_font.render(str(j['Name']) + ': ' + str(j['Gold']) + ' at ' + str(j['Time']), 1, (255, 255, 0)), (590, 420 + i * 15))
+        
 
     elif game.state == 3:
-        """
+        
         screen.fill((225, 225, 225))
         screen.blit(game.textinput.get_surface(), (10, 10))
         if game.textinput.update(events) and len(game.textinput.get_text()) > 0:
             game.save_highscore(game.textinput.get_text())
-        """
+        
 
 def screen_to_world(pos):
     return (int(pos[0]/game.tile_size), int(pos[1]/game.tile_size))
+
+def pixel(color, pos):
+    screen.fill(color, (pos, (1, 1)))
 
 
 pygame.init()
