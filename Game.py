@@ -37,7 +37,6 @@ class Game:
         self.merchant_spawn_ref_time = time()
 
         # Highscores
-        self.scores = self.get_highscores()[:10]
         self.localScores = self.get_local_highscores()[:5]
 
 
@@ -72,7 +71,6 @@ class Game:
             
             p_pos = self.player.pos
             ts = self.tile_size
-            S = self.game_scale
             speed_modifier = self.world_map.tiles[int(p_pos.x)][int(p_pos.y)][2]
             
             next_pos = p_pos + p_vel * speed_modifier * self.player.speed
@@ -100,8 +98,7 @@ class Game:
 
             # Timed events
             # Player
-            if time() - self.eat_ref_time > 3:
-                self.player.gold += 1
+            if time() - self.eat_ref_time > 20:
                 if self.player.provisions > 0:
                     self.player.provisions -= 1
                 else:
@@ -109,7 +106,7 @@ class Game:
                 self.eat_ref_time = time()
             
             # Cities
-            if time() - self.merchant_spawn_ref_time > 3: # timing is temporary #TODO
+            if time() - self.merchant_spawn_ref_time > 3: # most timings are temporary #TODO
                 self.spawn_trade_unit()
                 self.merchant_spawn_ref_time = time()
 
@@ -167,7 +164,7 @@ class Game:
             print('saving scorefile')
             pickle.dump(scores, f)
 
-
+        """
         #online database
         if self.player.gold > 0:
             self.logger.post_score('Highwayman', self.player.gold, str(name), self.game_time)
@@ -179,10 +176,11 @@ class Game:
             scores = sorted(scores, key=lambda scores: scores['Gold'], reverse=True)
         except:
             print('server database error')
-
+        """
         self.reset()
         self.end_game()
 
+    """
     def get_highscores(self):
         scores = []
         try:
@@ -192,7 +190,7 @@ class Game:
         except:
             print('server database error')
             return []
-
+    """
     def get_local_highscores(self):
         try:
             with open('highscore.txt', 'rb') as f:
@@ -226,7 +224,6 @@ class Game:
     def toggle_pause(self):
         if self.state == 1:
             self.state = 2
-            self.scores = self.get_highscores()[:10]
         elif self.state == 2:
             self.state = 1
     
@@ -241,7 +238,6 @@ class Game:
     def reset(self):
         self.player = None
         self.trade_units[:] = []
-        self.scores = self.get_highscores()[:10]
         self.localScores = self.get_local_highscores()[:5]
 
 

@@ -4,13 +4,16 @@ from math import sqrt, cos, sin, pi
 from Dist import dist
 from Game import Game
 
+
+
 def draw_game():
     screen_info = pygame.display.Info()
     w, h = screen_info.current_w, screen_info.current_h
-
+    Big_size = big_font.size(' ')
+    Small_size = small_font.size(' ')
+    
     if game.state == 0:
 
-        game.textinput = pygame_textinput.TextInput()
         pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 0, w, h))
 
         pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(w//2 - 40, h//2 - 20, 80, 40))
@@ -79,15 +82,15 @@ def draw_game():
                 pygame.draw.line(screen, (181, 103, 36), RP1_pos, RP2_pos, ts * S)
                 pygame.draw.line(screen, (209, 147, 54), RP1_pos, RP2_pos, int(ts * S/2))
 
-        font_size = big_font.size(' ')
+        
         for city in map.cities:
             if dist(city.pos, (p_pos.x, p_pos.y)) < sqrt((dims[0]//2)**2 + (dims[1]//2)**2) + city.size:
                 darker_col = (city.color[0]-50, city.color[1]-50, city.color[2]-50)
                 c_pos = world_to_screen(city.pos)
                 pygame.draw.circle(screen, city.color, c_pos, city.size * S, 0)
                 pygame.draw.circle(screen, darker_col, c_pos, (city.size-2) * S, 0)
-                screen.blit(big_font.render(str(city.sorted_resources[0]), 1, (255, 255, 0)), (c_pos[0] - int(S * city.size/3) - font_size[0]/2, c_pos[1] - font_size[1]/2))
-                screen.blit(big_font.render(str(city.sorted_resources[1]), 1, (  0, 255, 0)), (c_pos[0] + int(S * city.size/3) - font_size[0]/2, c_pos[1] - font_size[1]/2))
+                screen.blit(big_font.render(str(city.sorted_resources[0]), 1, (255, 255, 0)), (c_pos[0] - int(S * city.size/3) - Big_size[0]/2, c_pos[1] - Big_size[1]/2))
+                screen.blit(big_font.render(str(city.sorted_resources[1]), 1, (  0, 255, 0)), (c_pos[0] + int(S * city.size/3) - Big_size[0]/2, c_pos[1] - Big_size[1]/2))
 
         for unit in game.trade_units:
             unit_pos = world_to_screen(unit.pos)
@@ -126,12 +129,12 @@ def draw_game():
         screen.blit(small_font.render("PAUSE", 1, (255, 255, 255)), (377, 291))
 
     if game.state == 2 or game.state == 0:
-        
+        """
         pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(570, 10, 210, 40 + 15 * len(game.scores)))
         screen.blit(small_font.render("Highscores:", 1, (255, 255, 0)), (590, 20))
         for i, j in enumerate(game.scores):
             screen.blit(small_font.render(str(j['Name']) + ': ' + str(j['Gold']) + ' at ' + str(j['Time']), 1, (255, 255, 0)), (590, 35 + i * 15))
-        
+        """
         """
         controls = ["Controls:", "Movement: WASD", "Pause: p", "Exit Game/New Game: ESC", "Sumbmit Score: Enter"]
         pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(260, 400, 300, 120))
@@ -144,18 +147,18 @@ def draw_game():
         screen.blit(small_font.render("Sumbmit Score: Enter", 1, (255, 255, 255)), (280, 495))
         """
         
-        pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(570, 400, 210, 30 + 15 * len(game.localScores)))
-        screen.blit(small_font.render("Local Highscores:", 1, (255, 255, 0)), (590, 405))
-        for i, j in enumerate(game.localScores):
-            screen.blit(small_font.render(str(j['Name']) + ': ' + str(j['Gold']) + ' at ' + str(j['Time']), 1, (255, 255, 0)), (590, 420 + i * 15))
+        pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(w//2 - 250, 100, 500, 3 + Small_size[1] + 3 + (Small_size[1] + 3) * len(game.localScores)))
+        screen.blit(small_font.render("Highscores:", 1, (255, 255, 0)), (w//2 - 250 + 5, 100 + 3))
+        for i, score in enumerate(game.localScores):
+            screen.blit(small_font.render(str(score['Name']) + ': ' + str(score['Gold']) + ' at ' + str(score['Time']), 1, (255, 255, 0)), (w//2 - 250 + 5, 100 + 3 + Small_size[1] + i * (Small_size[1] + 3)))
         
 
     elif game.state == 3:
         
         screen.fill((225, 225, 225))
-        screen.blit(game.textinput.get_surface(), (10, 10))
-        if game.textinput.update(events) and len(game.textinput.get_text()) > 0:
-            game.save_highscore(game.textinput.get_text())
+        screen.blit(textinput.get_surface(), (10, 10))
+        if textinput.update(events) and len(textinput.get_text()) > 0:
+            game.save_highscore(textinput.get_text())
         
 
 def screen_to_world(pos):
@@ -177,6 +180,7 @@ screen = pygame.display.set_mode((800, 600))
 # Initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
 small_font = pygame.font.SysFont("monospace", 15)
 big_font = pygame.font.SysFont("monospace", 45)
+textinput = pygame_textinput.TextInput()
 
 running = True
 
