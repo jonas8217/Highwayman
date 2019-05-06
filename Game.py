@@ -1,10 +1,11 @@
-from math import ceil
+from math import ceil, pi
 from random import randint
 from highscoreLogger import Logger
 from Worldgen import World_map
 from Player import Player
 from Trade_unit import Trade_unit
 from Vector import Normalize, Vector as vect
+from Vector_to_radians import vect_to_rad
 from Dist import dist
 import pickle
 from highscoreLogger import Logger
@@ -34,6 +35,7 @@ class Game:
         self.game_time = 0
         self.game_ref_time = time()
         self.eat_ref_time = time()
+        self.attack_ref_time = time()
         self.merchant_spawn_ref_time = time()
 
         # Highscores
@@ -58,12 +60,13 @@ class Game:
                 p_vel += vect(-1, 0)
             if pressed[pg.K_RIGHT]:
                 p_vel += vect(1, 0)
-            
+            if pressed[pg.K_SPACE]:
+                attack = True
+            else:
+                attack = False
             
             
             # Debugging
-            if pressed[pg.K_m]:
-                self.trade_units.append(Trade_unit(self.world_map.cities[0], self.world_map.cities[1], None))
 
             # Movement
             # Player
@@ -92,6 +95,23 @@ class Game:
             
             for unit in to_pop[::-1]:
                 self.trade_units.remove(unit)
+
+            # Attacks
+            # Player
+            if attack:
+                if time() - self.player.last_attacked > self.player.attack_rate:
+                    for unit in self.trade_units:
+                        for guard in unit.guards:
+                            if dist(guard.rel_pos + unit.pos, self.player.pos) < self.player.attack_range:
+                                angle = vect_to_rad(guard.rel_pos + unit.pos - self.player.pos) # Angle of guard from x-axis with respect to player headding
+                                if abs(vect_to_rad(guard.rel_pos + unit.pos - self.player.pos) - self.player.rotation) < pi/3 and :
+                                
+                                self.player.attack()
+
+
+            # Guards
+
+
             # Time Stuff
 
             self.game_time = time() - self.game_ref_time
@@ -104,6 +124,8 @@ class Game:
                 else:
                     self.death()
                 self.eat_ref_time = time()
+
+            
             
             # Cities
             if time() - self.merchant_spawn_ref_time > 3: # most timings are temporary #TODO
@@ -129,14 +151,14 @@ class Game:
         
         guards = randint(0, cargo_size - 1) + randint(0, ceil(start_city.weight/2) - 1)
 
-        self.trade_units.append(Trade_unit(start_city, end_city, cargo, guards))
+        self.trade_units.append(Trade_unit(start_city, end_city, cargo, time(), guards))
 
     def generate_world(self, w, h, seed=randint(1, 500), size=1):
         self.world_map = World_map(w, h, seed, size)
         
 
     def place_player(self, pos):
-        self.player = Player(pos[0], pos[1])
+        self.player = Player(pos[0], pos[1], time())
 
     
     def save_highscore(self, name):

@@ -3,7 +3,7 @@ from math import cos,sin,pi
 from Dist import dist
 
 class Trade_unit():
-    def __init__(self, start_city, end_city, cargo, guards = 0):
+    def __init__(self, start_city, end_city, cargo, time, guards = 0):
         s_pos = vect(start_city.pos[0], start_city.pos[1])
         e_pos = vect(end_city.pos[0], end_city.pos[1])
         self.end_city = end_city
@@ -16,7 +16,7 @@ class Trade_unit():
         self.vel = Normalize(e_pos - s_pos)
         self.guards = []
         if guards > 0:
-            self.guards = assign_guards(guards, self.vel)
+            self.guards = assign_guards(guards, self.vel, time)
 
 
     def move(self, p_pos):
@@ -39,7 +39,7 @@ class Trade_unit():
             
 
 
-def assign_guards(num, direc):
+def assign_guards(num, direc, time):
     guards = []
     rotation = (2*pi)/num
     offset = 0
@@ -50,17 +50,21 @@ def assign_guards(num, direc):
         phi = offset + rotation * i
         x_pos, y_pos= x * cos(phi) - y * sin(phi), x * sin(phi) + y * cos(phi)
         g_pos = vect(x_pos * 1.5, y_pos * 1.5)
-        guards.append(Guard(g_pos))
+        guards.append(Guard(g_pos, time))
     return guards
 
 class Guard:
-    def __init__(self,rel_pos):
+    def __init__(self, rel_pos, time):
         x, y = rel_pos.x, rel_pos.y
         self.rel_pos = vect(x,y)
         self.original_rel_pos = vect(x,y) 
         self.speed = 0.1
         self.hit_points = 15
         self.damage = 3
+        self.attack_range = 2
+        self.attack_rate = 1
+        self.attack_duration = 0.15
+        self.last_attacked = time
 
     def move(self, guarding_pos, p_pos = None):
         pos = self.rel_pos + guarding_pos

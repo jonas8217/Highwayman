@@ -16,8 +16,9 @@ def draw_game():
 
         pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 0, w, h))
 
-        pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(w//2 - 40, h//2 - 20, 80, 40))
-        screen.blit(small_font.render("MENU", 1, (255, 255, 255)), (381, 291))
+        pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(w//2 - 40, 50, 80, 40))
+        txt_size = small_font.size("MENU")
+        screen.blit(small_font.render("MENU", 1, (255, 255, 255)), (w//2 - txt_size[0]//2, 70 - txt_size[1]//2))
 
     elif game.state == 0.5:
 
@@ -105,15 +106,6 @@ def draw_game():
         pygame.draw.circle(screen, (255, 255, 255), (int(w//2 + S * ts//2 + cos(p_rot - pi/6) * S * ts//3), int(h//2 + S * ts//2 + sin(p_rot - pi/6) * S * ts//3)), int(S * ts//6), 0)
         pygame.draw.circle(screen, (255, 255, 255), (int(w//2 + S * ts//2 + cos(p_rot + pi/6) * S * ts//3), int(h//2 + S * ts//2 + sin(p_rot + pi/6) * S * ts//3)), int(S * ts//6), 0)
 
-        """
-        pygame.draw.polygon(screen, (255, 255, 255), game.Ship_pointlist(), 1)
-        if game.thrust_counter > 9:
-            game.thrust_counter = 0
-        if 0 <= game.thrust_counter <= 5 and game.thrust:
-            pygame.draw.polygon(screen, (255, 255, 255), game.Ship_thrust_pointlist(), 1)
-        game.thrust_counter += 1
-        """
-
         
         # Hud
         
@@ -129,28 +121,19 @@ def draw_game():
         screen.blit(small_font.render("PAUSE", 1, (255, 255, 255)), (377, 291))
 
     if game.state == 2 or game.state == 0:
-        """
-        pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(570, 10, 210, 40 + 15 * len(game.scores)))
-        screen.blit(small_font.render("Highscores:", 1, (255, 255, 0)), (590, 20))
-        for i, j in enumerate(game.scores):
-            screen.blit(small_font.render(str(j['Name']) + ': ' + str(j['Gold']) + ' at ' + str(j['Time']), 1, (255, 255, 0)), (590, 35 + i * 15))
-        """
-        """
-        controls = ["Controls:", "Movement: WASD", "Pause: p", "Exit Game/New Game: ESC", "Sumbmit Score: Enter"]
-        pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(260, 400, 300, 120))
-        screen.blit(small_font.render("Controls:", 1, (255, 255, 255)), (270, 405))
-        screen.blit(small_font.render("Movement: WASD", 1, (255, 255, 255)), (280, 420))
-        screen.blit(small_font.render("Turn: Left and Right Arrows", 1, (255, 255, 255)), (280, 435))
-        screen.blit(small_font.render("Shoot: Spacebar", 1, (255, 255, 255)), (280, 450))
-        screen.blit(small_font.render("Pause: p", 1, (255, 255, 255)), (280, 465))
-        screen.blit(small_font.render("Exit Game/New Game: ESC", 1, (255, 255, 255)), (280, 480))
-        screen.blit(small_font.render("Sumbmit Score: Enter", 1, (255, 255, 255)), (280, 495))
-        """
         
-        pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(w//2 - 250, 100, 500, 3 + Small_size[1] + 3 + (Small_size[1] + 3) * len(game.localScores)))
-        screen.blit(small_font.render("Highscores:", 1, (255, 255, 0)), (w//2 - 250 + 5, 100 + 3))
+        controls = ["Movement: WASD", "Attack: Spacebar", "Pause: p", "Exit Game/New Game: ESC", "Sumbmit Score: Enter"]
+        pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(w//2 - 150, 400, 300, (len(controls) + 1) * (Small_size[1] + 3) + 3))
+        screen.blit(small_font.render("Controls:", 1, (255, 255, 255)), (270, 403))
+        for i, text in enumerate(controls):
+            screen.blit(small_font.render(text, 1, (255, 255, 255)), (275, 403 + (i + 1) * (Small_size[1] + 3)))
+        
+        
+        pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(w//2 - 175, 120, 350, 3 + Small_size[1] + 3 + (Small_size[1] + 3) * len(game.localScores)))
+        screen.blit(small_font.render("Highscores:", 1, (255, 255, 255)), (w//2 - 175 + 5, 120 + 3))
         for i, score in enumerate(game.localScores):
-            screen.blit(small_font.render(str(score['Name']) + ': ' + str(score['Gold']) + ' at ' + str(score['Time']), 1, (255, 255, 0)), (w//2 - 250 + 5, 100 + 3 + Small_size[1] + i * (Small_size[1] + 3)))
+            if len(score['Name']) > 0:
+                screen.blit(small_font.render(str(score['Name']) + ' - Gold: ' + str(score['Gold']) + ' Time: ' + str(int(score['Time']/60)) + ':' + str(int(score['Time'] % 60)), 1, (255, 255, 255)), (w//2 - 175 + 5, 120 + (i + 1) * (Small_size[1] + 3)))
         
 
     elif game.state == 3:
