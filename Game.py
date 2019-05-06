@@ -5,7 +5,7 @@ from Worldgen import World_map
 from Player import Player
 from Trade_unit import Trade_unit
 from Vector import Normalize, Vector as vect
-from Vector_to_radians import vect_to_rad
+from Vector_math import vect_to_angle, vectors_to_angle, angle_to_vector
 from Dist import dist
 import pickle
 from highscoreLogger import Logger
@@ -14,16 +14,16 @@ from time import time
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, screen_info):
         self.logger = Logger()
-
+        w, h = screen_info.current_w, screen_info.current_h
         self.state = 0
 
         self.world_map = None
 
         self.game_scale = 5
         self.tile_size = 4
-        self.world_dim = (200,150)
+        self.world_dim = (w//self.tile_size,h//self.tile_size)
         self.game_dim = (self.world_dim[0]//self.game_scale, self.world_dim[1]//self.game_scale)
         
         self.player = None
@@ -72,8 +72,9 @@ class Game:
             # Player
             p_vel = Normalize(p_vel)
             
-            p_pos = self.player.pos
+            
             ts = self.tile_size
+            p_pos = vect(self.player.pos.x, self.player.pos.y)
             speed_modifier = self.world_map.tiles[int(p_pos.x)][int(p_pos.y)][2]
             
             next_pos = p_pos + p_vel * speed_modifier * self.player.speed
@@ -98,16 +99,15 @@ class Game:
 
             # Attacks
             # Player
+            """
             if attack:
                 if time() - self.player.last_attacked > self.player.attack_rate:
                     for unit in self.trade_units:
                         for guard in unit.guards:
                             if dist(guard.rel_pos + unit.pos, self.player.pos) < self.player.attack_range:
-                                angle = vect_to_rad(guard.rel_pos + unit.pos - self.player.pos) # Angle of guard from x-axis with respect to player headding
-                                if abs(vect_to_rad(guard.rel_pos + unit.pos - self.player.pos) - self.player.rotation) < pi/3 and :
-                                
-                                self.player.attack()
-
+                                if abs(vectors_to_angle(self.player.pos - (guard.rel_pos + unit.pos), angle_to_vector(self.player.rotation))) < pi/3:
+                                    self.player.attack()
+            """
 
             # Guards
 
@@ -236,7 +236,7 @@ class Game:
         if self.state == 0:
             self.state = 0.5
         
-        self.generate_world(200,150,randint(1,500),3)
+        self.generate_world(self.world_dim[0],self.world_dim[1],randint(1,500),3)
         
 
     def end_game(self):

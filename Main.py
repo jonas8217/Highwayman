@@ -49,7 +49,8 @@ def draw_game():
         dims = game.game_dim    # Game_dim[0],game_dim[1] = game view size in tiles
         S = game.game_scale     # Difference in scale between world and view size
 
-        world_to_screen = lambda pos : (int(((pos[0] - p_pos.x + dims[0]//2) * ts + ts//2) * S), int(((pos[1] - p_pos.y + dims[1]//2) * ts + ts//2) * S))
+        world_to_screen =      lambda pos : (((int(pos[0] - p_pos.x) + dims[0]//2) * ts + ts//2) * S, ((int(pos[1] - p_pos.y) + dims[1]//2) * ts + ts//2) * S)
+        world_to_screen_unit = lambda pos : (int(((pos[0] - p_pos.x + dims[0]//2) * ts + ts - int(ts * (p_pos.x - int(p_pos.x)))) * S), int(((pos[1] - p_pos.y + dims[1]//2) * ts + ts - int(ts * (p_pos.x - int(p_pos.x)))) * S))
 
         lB = 0 # LeftBoundary
         rB = 0 # RightBoundary
@@ -71,7 +72,14 @@ def draw_game():
         # Map
         for x in range(lB, w//(ts*S) - rB):
             for y in range(tB, h//(ts*S) - bB):
-                pygame.draw.rect(screen, map.tiles[int(p_pos.x) - dims[0]//2 + x][int(p_pos.y) - dims[1]//2 + y][1], pygame.Rect(x * ts * S, y * ts  * S, ts * S, ts * S))
+                tile_color = map.tiles[int(p_pos.x) - dims[0]//2 + x][int(p_pos.y) - dims[1]//2 + y][1]
+                pygame.draw.rect(screen, tile_color, pygame.Rect(x * ts * S, y * ts * S, ts * S, ts * S))
+        
+        # Lines
+        for x in range(w//(ts*S)):
+            pygame.draw.line(screen, (80, 80, 80), (x * ts * S, 0), (x * ts * S, h))
+        for y in range(h//(ts*S)):
+            pygame.draw.line(screen, (80, 80, 80), (0, y * ts * S), (w, y * ts * S))
         
         # Roads
         for road in map.roads:
@@ -94,10 +102,10 @@ def draw_game():
                 screen.blit(big_font.render(str(city.sorted_resources[1]), 1, (  0, 255, 0)), (c_pos[0] + int(S * city.size/3) - Big_size[0]/2, c_pos[1] - Big_size[1]/2))
 
         for unit in game.trade_units:
-            unit_pos = world_to_screen(unit.pos)
+            unit_pos = world_to_screen_unit(unit.pos)
             pygame.draw.circle(screen, (0, 255, 0), unit_pos, 2 * S, 0)
             for guard in unit.guards:
-                guard_pos = world_to_screen(guard.rel_pos + unit.pos)
+                guard_pos = world_to_screen_unit(guard.rel_pos + unit.pos)
                 pygame.draw.circle(screen, (0, 0, 255), guard_pos, 2 * S, 0)
         
         # Player
@@ -111,7 +119,7 @@ def draw_game():
         
         screen.blit(small_font.render("Gold: {}".format(game.player.gold), 1, (0, 0, 0)), (20, 20))
         screen.blit(small_font.render("Provisions: {}".format(game.player.provisions), 1, (0, 0, 0)), (20, 35))
-        #screen.blit(small_font.render("Materials: {}".format(game.player.materials), 1, (0, 0, 0)), (20, 50))
+        screen.blit(small_font.render("FPS: {}".format(str(int(clock.get_fps()))), 1, (0, 0, 0)), (20, 50))
         
         # Health
 
@@ -147,9 +155,6 @@ def draw_game():
 def screen_to_world(pos):
     return (int(pos[0]/game.tile_size), int(pos[1]/game.tile_size))
 
-def pixel(color, pos):
-    screen.fill(color, (pos, (1, 1)))
-
 
 pygame.init()
 """
@@ -167,7 +172,7 @@ textinput = pygame_textinput.TextInput()
 
 running = True
 
-game = Game()
+game = Game(pygame.display.Info())
 
 clock = pygame.time.Clock()
 
