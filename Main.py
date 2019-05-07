@@ -48,9 +48,9 @@ def draw_game():
         ts = game.tile_size     # Size of an individual tile in pixels
         dims = game.game_dim    # Game_dim[0],game_dim[1] = game view size in tiles
         S = game.game_scale     # Difference in scale between world and view size
-
+        p_pos_x, p_pos_y = p_pos.x - int(p_pos.x), p_pos.y - int(p_pos.y)
         world_to_screen =      lambda pos : (((int(pos[0] - p_pos.x) + dims[0]//2) * ts + ts//2) * S, ((int(pos[1] - p_pos.y) + dims[1]//2) * ts + ts//2) * S)
-        world_to_screen_unit = lambda pos : (int(((pos[0] - p_pos.x + dims[0]//2) * ts + ts - int(ts * (p_pos.x - int(p_pos.x)))) * S), int(((pos[1] - p_pos.y + dims[1]//2) * ts + ts - int(ts * (p_pos.x - int(p_pos.x)))) * S))
+        world_to_screen_unit = lambda pos : (int(((pos[0] - p_pos.x + dims[0]//2 + p_pos_x) * ts) * S), int(((pos[1] - p_pos.y + dims[1]//2 + p_pos_y) * ts) * S))
 
         lB = 0 # LeftBoundary
         rB = 0 # RightBoundary

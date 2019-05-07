@@ -67,14 +67,14 @@ class Game:
             
             
             # Debugging
-
+    
             # Movement
             # Player
             p_vel = Normalize(p_vel)
             
             
             ts = self.tile_size
-            p_pos = vect(self.player.pos.x, self.player.pos.y)
+            p_pos = vect(int(self.player.pos.x), int(self.player.pos.y))
             speed_modifier = self.world_map.tiles[int(p_pos.x)][int(p_pos.y)][2]
             
             next_pos = p_pos + p_vel * speed_modifier * self.player.speed
