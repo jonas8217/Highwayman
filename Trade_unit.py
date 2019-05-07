@@ -36,6 +36,10 @@ class Trade_unit():
             else:
                 for guard in self.guards:
                     guard.move(self.pos)
+
+    def check_if_guard_dead(self, guard):
+        if guard.hit_points <= 0:
+            self.guards.remove(guard)
             
 
 

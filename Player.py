@@ -4,7 +4,7 @@ from Vector_math import vect_to_angle
 class Player:
     def __init__(self, x, y, time):
         self.pos = vect(x, y)
-        self.speed = 0.05
+        self.speed = 0.15
         self.hit_points = 20
         self.damage = 4
         self.attack_range = 3.5
@@ -23,9 +23,9 @@ class Player:
         if not (vel[0] == 0 and vel[1] == 0):
             self.rotation = vect_to_angle(vel)
 
-    def attack (self, targets):
-        for target in targets:
+    def attack (self, target):
             target.hit_points -= self.damage
+            print(target.hit_points)
 
 
     

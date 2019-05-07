@@ -73,7 +73,6 @@ class Game:
             p_vel = Normalize(p_vel)
             
             
-            ts = self.tile_size
             p_pos = vect(int(self.player.pos.x), int(self.player.pos.y))
             speed_modifier = self.world_map.tiles[int(p_pos.x)][int(p_pos.y)][2]
             
@@ -86,7 +85,7 @@ class Game:
             # Trade_units
             to_pop = []
             for unit in self.trade_units:
-                if dist(unit.pos, unit.end_city.pos) < 1 * ts:
+                if dist(unit.pos, unit.end_city.pos) < 1 * unit.end_city.size / self.tile_size:
                     to_pop.append(unit)
                 else:
                     pos = None
@@ -99,15 +98,21 @@ class Game:
 
             # Attacks
             # Player
-            """
+            
             if attack:
                 if time() - self.player.last_attacked > self.player.attack_rate:
+                    self.player.last_attacked = time()
                     for unit in self.trade_units:
+                        if dist(unit.pos, self.player.pos):
+                            if abs(vectors_to_angle(self.player.pos - unit.pos, angle_to_vector(self.player.rotation))) < pi/3:
+                                self.player.attack(unit)
+                                self.check_if_unit_dead(unit)
                         for guard in unit.guards:
                             if dist(guard.rel_pos + unit.pos, self.player.pos) < self.player.attack_range:
                                 if abs(vectors_to_angle(self.player.pos - (guard.rel_pos + unit.pos), angle_to_vector(self.player.rotation))) < pi/3:
-                                    self.player.attack()
-            """
+                                    self.player.attack(guard)
+                                    unit.check_if_guard_dead(guard)
+            
 
             # Guards
 
@@ -152,6 +157,10 @@ class Game:
         guards = randint(0, cargo_size - 1) + randint(0, ceil(start_city.weight/2) - 1)
 
         self.trade_units.append(Trade_unit(start_city, end_city, cargo, time(), guards))
+
+    def check_if_unit_dead(self, unit):
+        if unit.hit_points <= 0:
+            self.trade_units.remove(unit)
 
     def generate_world(self, w, h, seed=randint(1, 500), size=1):
         self.world_map = World_map(w, h, seed, size)
