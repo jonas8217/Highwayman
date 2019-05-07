@@ -141,7 +141,7 @@ class Game:
             
             
             # Cities
-            if time() - self.merchant_spawn_ref_time > 3: # most timings are temporary #TODO
+            if time() - self.merchant_spawn_ref_time > 3:
                 self.spawn_trade_unit()
                 self.merchant_spawn_ref_time = time()
 
