@@ -116,13 +116,22 @@ def draw_game():
 
         
         # Hud
+        # Info
         
-        screen.blit(small_font.render("Gold: {}".format(game.player.gold), 1, (0, 0, 0)), (20, 20))
-        screen.blit(small_font.render("Provisions: {}".format(game.player.provisions), 1, (0, 0, 0)), (20, 35))
-        screen.blit(small_font.render("FPS: {}".format(str(int(clock.get_fps()))), 1, (0, 0, 0)), (20, 50))
-        
-        # Health
+        screen.blit(small_font.render("FPS:{}".format(str(int(clock.get_fps()))), 1, (0, 0, 0)), (w - Small_size[0] * 6 - 1, int(S * ts * 1/2 - Small_size[1]//2)))
 
+        # Rescources
+        pygame.draw.rect(screen, (  0,   0,   0), pygame.Rect(S * ts//2 - 1, S * ts//2 - 1, S * ts * 8 + 2, S * ts * 4 + 2))
+        pygame.draw.rect(screen, (150, 150, 150), pygame.Rect(S * ts//2    , S * ts//2    , S * ts * 8    , S * ts * 4    ))
+        screen.blit(small_font.render("Gold: {}".format(game.player.gold),             1, (0, 0, 0)), (int(S * ts * 3/2 - Small_size[0]), int(S * ts * 3/2 - Small_size[1]//2)))
+        screen.blit(small_font.render("Provisions: {}".format(game.player.provisions), 1, (0, 0, 0)), (int(S * ts * 3/2 - Small_size[0]), int(S * ts * 5/2 - Small_size[1]//2)))
+        screen.blit(small_font.render("Materials: {}".format(game.player.materials),   1, (0, 0, 0)), (int(S * ts * 3/2 - Small_size[0]), int(S * ts * 7/2 - Small_size[1]//2)))
+
+        # Health
+        width, height, x_pos, y_pos = 200, 50, w//2, h- 50
+        pygame.draw.rect(screen, (  0,   0,   0), pygame.Rect(x_pos - width//2 - 1, y_pos - height//2 - 1, width + 2, height + 2))
+        pygame.draw.rect(screen, (255,   0,   0), pygame.Rect(x_pos - width//2, y_pos - height//2, width, height))
+        pygame.draw.rect(screen, (  0, 255,   0), pygame.Rect(x_pos - width//2, y_pos - height//2, int(width * player.hit_points/player.max_hp), height))
 
     elif game.state == 2:
         pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(w//2 - 40, h//2 - 20, 80, 40))

@@ -33,10 +33,11 @@ class Game:
 
         # Reference times
         self.game_time = 0
-        self.game_ref_time = time()
-        self.eat_ref_time = time()
-        self.attack_ref_time = time()
-        self.merchant_spawn_ref_time = time()
+        self.game_ref = time()
+        self.eat_ref = time()
+        self.regen_ref = time()
+        self.attack_ref = time()
+        self.merchant_spawn_ref = time()
 
         # Highscores
         self.localScores = self.get_local_highscores()[:5]
@@ -73,13 +74,14 @@ class Game:
             p_vel = Normalize(p_vel)
             
             
-            p_pos = vect(int(self.player.pos.x), int(self.player.pos.y))
+            p_pos = vect(self.player.pos.x, self.player.pos.y)
+
             speed_modifier = self.world_map.tiles[int(p_pos.x)][int(p_pos.y)][2]
             
             next_pos = p_pos + p_vel * speed_modifier * self.player.speed
 
             # Stops player from moving outside the world
-            if (0 < int(next_pos.x) < self.world_map.width) and (0 < int(next_pos.y) < self.world_map.height):
+            if (0 < next_pos.x < self.world_map.width) and (0 < next_pos.y < self.world_map.height):
                 self.player.move(p_vel, speed_modifier)
 
             # Trade_units
@@ -127,23 +129,28 @@ class Game:
 
             # Time Stuff
 
-            self.game_time = time() - self.game_ref_time
+            self.game_time = time() - self.game_ref
 
             # Timed events
             # Player
-            if time() - self.eat_ref_time > 20:
+            if time() - self.eat_ref > 20: # Eating
                 if self.player.provisions > 0:
                     self.player.provisions -= 1
                 else:
                     self.death()
-                self.eat_ref_time = time()
+                self.eat_ref = time()
+
+            if time() - self.regen_ref > 2:
+                if self.player.hit_points < self.player.max_hp:
+                    self.regen_ref = time()
+                    self.player.hit_points += 1
 
             
             
             # Cities
-            if time() - self.merchant_spawn_ref_time > 3:
+            if time() - self.merchant_spawn_ref > 3:
                 self.spawn_trade_unit()
-                self.merchant_spawn_ref_time = time()
+                self.merchant_spawn_ref = time()
 
 
     def spawn_trade_unit(self):

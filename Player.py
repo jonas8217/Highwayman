@@ -5,13 +5,13 @@ class Player:
     def __init__(self, x, y, time):
         self.pos = vect(x, y)
         self.speed = 0.15
-        self.hit_points = 20
+        self.max_hp = 30
+        self.hit_points = self.max_hp
         self.damage = 4
         self.attack_range = 2.5
         self.attack_rate = 0.5
         self.attack_duration = 0.15
         self.last_attacked = time
-        self.saturation = 10
         self.gold = 0
         self.provisions = 10
         self.materials = 0
