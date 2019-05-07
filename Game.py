@@ -88,10 +88,10 @@ class Game:
                 if dist(unit.pos, unit.end_city.pos) < 1 * unit.end_city.size / self.tile_size:
                     to_pop.append(unit)
                 else:
-                    pos = None
+                    player = None
                     if dist((int(p_pos.x), int(p_pos.y)), unit.pos) < unit.detect_dist:
-                        pos = vect(p_pos.x, p_pos.y) 
-                    unit.move(pos)
+                        player = self.player
+                    unit.move(player)
             
             for unit in to_pop[::-1]:
                 self.trade_units.remove(unit)
@@ -103,18 +103,26 @@ class Game:
                 if time() - self.player.last_attacked > self.player.attack_rate:
                     self.player.last_attacked = time()
                     for unit in self.trade_units:
-                        if dist(unit.pos, self.player.pos):
-                            if abs(vectors_to_angle(self.player.pos - unit.pos, angle_to_vector(self.player.rotation))) < pi/3:
+                        if dist(unit.pos, self.player.pos) < self.player.attack_range:
+                            if abs(vectors_to_angle(unit.pos - self.player.pos, angle_to_vector(self.player.rotation))) < pi/3:
                                 self.player.attack(unit)
                                 self.check_if_unit_dead(unit)
                         for guard in unit.guards:
                             if dist(guard.rel_pos + unit.pos, self.player.pos) < self.player.attack_range:
-                                if abs(vectors_to_angle(self.player.pos - (guard.rel_pos + unit.pos), angle_to_vector(self.player.rotation))) < pi/3:
+                                if abs(vectors_to_angle((guard.rel_pos + unit.pos) - self.player.pos, angle_to_vector(self.player.rotation))) < pi/3:
                                     self.player.attack(guard)
                                     unit.check_if_guard_dead(guard)
             
 
             # Guards
+            for unit in self.trade_units:
+                for guard in unit.guards:
+                    pos = unit.pos + guard.rel_pos
+                    if dist(pos, p_pos) < guard.attack_range:
+                        if time() - guard.last_attacked > guard.attack_rate:
+                            guard.last_attacked = time()
+                            guard.attack(self.player)
+                            self.check_if_player_dead()
 
 
             # Time Stuff
@@ -160,7 +168,15 @@ class Game:
 
     def check_if_unit_dead(self, unit):
         if unit.hit_points <= 0:
+            self.player.gold += unit.cargo[0] * randint(5,10)
+            self.player.provisions += unit.cargo[1] * randint(5,10)
+            self.player.materials += unit.cargo[2] * randint(5,10)
             self.trade_units.remove(unit)
+
+    def check_if_player_dead(self):
+        if self.player.hit_points <= 0:
+            self.death()
+
 
     def generate_world(self, w, h, seed=randint(1, 500), size=1):
         self.world_map = World_map(w, h, seed, size)

@@ -7,7 +7,7 @@ class Player:
         self.speed = 0.15
         self.hit_points = 20
         self.damage = 4
-        self.attack_range = 3.5
+        self.attack_range = 2.5
         self.attack_rate = 0.5
         self.attack_duration = 0.15
         self.last_attacked = time
@@ -18,14 +18,13 @@ class Player:
         self.rotation = 0
         
 
-    def move (self, vel, speed_modifier = 1):
+    def move(self, vel, speed_modifier = 1):
         self.pos += vel * self.speed * speed_modifier
         if not (vel[0] == 0 and vel[1] == 0):
             self.rotation = vect_to_angle(vel)
 
-    def attack (self, target):
+    def attack(self, target):
             target.hit_points -= self.damage
-            print(target.hit_points)
 
 
     
