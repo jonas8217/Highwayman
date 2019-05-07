@@ -98,8 +98,9 @@ def draw_game():
                 c_pos = world_to_screen(city.pos)
                 pygame.draw.circle(screen, city.color, c_pos, city.size * S, 0)
                 pygame.draw.circle(screen, darker_col, c_pos, (city.size-2) * S, 0)
-                screen.blit(big_font.render(str(city.sorted_resources[0]), 1, (255, 255, 0)), (c_pos[0] - int(S * city.size/3) - Big_size[0]/2, c_pos[1] - Big_size[1]/2))
-                screen.blit(big_font.render(str(city.sorted_resources[1]), 1, (  0, 255, 0)), (c_pos[0] + int(S * city.size/3) - Big_size[0]/2, c_pos[1] - Big_size[1]/2))
+                screen.blit(big_font.render(str(city.sorted_resources[0]), 1, (255, 255, 0)), (c_pos[0] - int(S * city.size/2) - Big_size[0]/2, c_pos[1] - Big_size[1]/2))
+                screen.blit(big_font.render(str(city.sorted_resources[1]), 1, (  0, 255, 0)), (c_pos[0] - Big_size[0]/2, c_pos[1] - Big_size[1]/2))
+                screen.blit(big_font.render(str(city.sorted_resources[2]), 1, (100,  50, 0)), (c_pos[0] + int(S * city.size/2) - Big_size[0]/2, c_pos[1] - Big_size[1]/2))
 
         for unit in game.trade_units:
             unit_pos = world_to_screen_unit(unit.pos)

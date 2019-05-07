@@ -1,6 +1,5 @@
 from math import ceil, pi
 from random import randint
-from highscoreLogger import Logger
 from Worldgen import World_map
 from Player import Player
 from Trade_unit import Trade_unit
@@ -8,14 +7,12 @@ from Vector import Normalize, Vector as vect
 from Vector_math import vect_to_angle, vectors_to_angle, angle_to_vector
 from Dist import dist
 import pickle
-from highscoreLogger import Logger
 from time import time
 
 
 
 class Game:
     def __init__(self, screen_info):
-        self.logger = Logger()
         w, h = screen_info.current_w, screen_info.current_h
         self.state = 0
 
