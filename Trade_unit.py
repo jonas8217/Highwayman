@@ -10,7 +10,8 @@ class Trade_unit():
         self.pos = vect(s_pos.x, s_pos.y)
         self.cargo = cargo
         self.speed = 0.1
-        self.hit_points = 10
+        self.max_hp = 10
+        self.hit_points = self.max_hp
         self.detect_dist = 12
         
         self.vel = Normalize(e_pos - s_pos)
@@ -63,7 +64,8 @@ class Guard:
         self.rel_pos = vect(x,y)
         self.original_rel_pos = vect(x,y) 
         self.speed = 0.1
-        self.hit_points = 15
+        self.max_hp = 15
+        self.hit_points = self.max_hp
         self.damage = 3
         self.attack_range = 1.5
         self.attack_rate = 3

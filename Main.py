@@ -105,9 +105,11 @@ def draw_game():
         for unit in game.trade_units:
             unit_pos = world_to_screen_unit(unit.pos)
             pygame.draw.circle(screen, (0, 255, 0), unit_pos, 2 * S, 0)
+            health_bar((unit_pos[0], unit_pos[1] + 8), (20, 4), unit.hit_points, unit.max_hp)
             for guard in unit.guards:
                 guard_pos = world_to_screen_unit(guard.rel_pos + unit.pos)
                 pygame.draw.circle(screen, (0, 0, 255), guard_pos, 2 * S, 0)
+                health_bar((guard_pos[0], guard_pos[1] + 8), (16, 4), guard.hit_points, guard.max_hp)
         
         # Player
         pygame.draw.circle(screen, (255, 0, 0), (w//2 + S * ts//2, h//2 + S * ts//2), S * ts//2, 0)
@@ -130,9 +132,7 @@ def draw_game():
 
         # Health
         width, height, x_pos, y_pos = 200, 50, w//2, h- 50
-        pygame.draw.rect(screen, (  0,   0,   0), pygame.Rect(x_pos - width//2 - 1, y_pos - height//2 - 1, width + 2, height + 2))
-        pygame.draw.rect(screen, (255,   0,   0), pygame.Rect(x_pos - width//2, y_pos - height//2, width, height))
-        pygame.draw.rect(screen, (  0, 255,   0), pygame.Rect(x_pos - width//2, y_pos - height//2, int(width * player.hit_points/player.max_hp), height))
+        health_bar((x_pos,y_pos), (width,height), player.hit_points, player.max_hp)
 
     elif game.state == 2:
         pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(w//2 - 40, h//2 - 20, 80, 40))
@@ -164,6 +164,11 @@ def draw_game():
 
 def screen_to_world(pos):
     return (int(pos[0]/game.tile_size), int(pos[1]/game.tile_size))
+
+def health_bar (pos, size, health, max_health):
+    pygame.draw.rect(screen, (  0,   0,   0), pygame.Rect(pos[0] - size[0]//2 - 1, pos[1] - size[1]//2 - 1, size[0] + 2, size[1] + 2))
+    pygame.draw.rect(screen, (255,   0,   0), pygame.Rect(pos[0] - size[0]//2, pos[1] - size[1]//2, size[0], size[1]))
+    pygame.draw.rect(screen, (  0, 255,   0), pygame.Rect(pos[0] - size[0]//2, pos[1] - size[1]//2, int(size[0] * health/max_health), size[1]))
 
 
 pygame.init()
