@@ -49,8 +49,8 @@ def draw_game():
         dims = game.game_dim    # Game_dim[0],game_dim[1] = game view size in tiles
         S = game.game_scale     # Difference in scale between world and view size
         p_pos_x, p_pos_y = p_pos.x - int(p_pos.x), p_pos.y - int(p_pos.y)
-        world_to_screen =      lambda pos : (int(((pos[0] - int(p_pos.x) + dims[0]//2 + 1/2) * ts) * S), int(((pos[1] - int(p_pos.y) + dims[1]//2 + 1/2) * ts) * S))
-        world_to_screen_unit = lambda pos : (int(((pos[0] - p_pos.x + dims[0]//2 + p_pos_x + 1/2) * ts) * S), int(((pos[1] - p_pos.y + dims[1]//2 + p_pos_y + 1/2) * ts) * S))
+        world_to_screen_grid =    lambda pos : (int(((pos[0] - int(p_pos.x) + dims[0]//2 + 1/2) * ts) * S), int(((pos[1] - int(p_pos.y) + dims[1]//2 + 1/2) * ts) * S))
+        world_to_screen_no_grid = lambda pos : (int(((pos[0] - p_pos.x + dims[0]//2 + p_pos_x + 1/2) * ts) * S), int(((pos[1] - p_pos.y + dims[1]//2 + p_pos_y + 1/2) * ts) * S))
 
         lB = 0 # LeftBoundary
         rB = 0 # RightBoundary
@@ -87,7 +87,7 @@ def draw_game():
             roadlen = dist(P1, P2)
             PMid = ((P1[0] + P2[0])/2, (P1[1] + P2[1])/2)
             if dist(PMid, (p_pos.x, p_pos.y)) < sqrt((dims[0]//2)**2 + (dims[1]//2)**2) + roadlen/2:
-                RP1_pos,RP2_pos  = world_to_screen(road.P1), world_to_screen(road.P2)
+                RP1_pos,RP2_pos  = world_to_screen_grid(road.P1), world_to_screen_grid(road.P2)
                 pygame.draw.line(screen, (181, 103, 36), RP1_pos, RP2_pos, ts * S)
                 pygame.draw.line(screen, (209, 147, 54), RP1_pos, RP2_pos, int(ts * S/2))
 
@@ -95,7 +95,7 @@ def draw_game():
         for city in map.cities:
             if dist(city.pos, (p_pos.x, p_pos.y)) < sqrt((dims[0]//2)**2 + (dims[1]//2)**2) + city.size:
                 darker_col = (city.color[0]-50, city.color[1]-50, city.color[2]-50)
-                c_pos = world_to_screen(city.pos)
+                c_pos = world_to_screen_grid(city.pos)
                 pygame.draw.circle(screen, city.color, c_pos, city.size * S, 0)
                 pygame.draw.circle(screen, darker_col, c_pos, (city.size-2) * S, 0)
                 screen.blit(big_font.render(str(city.sorted_resources[0]), 1, (255, 255, 0)), (c_pos[0] - int(S * city.size/2) - Big_size[0]/2, c_pos[1] - Big_size[1]/2))
@@ -103,13 +103,18 @@ def draw_game():
                 screen.blit(big_font.render(str(city.sorted_resources[2]), 1, (100,  50, 0)), (c_pos[0] + int(S * city.size/2) - Big_size[0]/2, c_pos[1] - Big_size[1]/2))
 
         for unit in game.trade_units:
-            unit_pos = world_to_screen_unit(unit.pos)
+            unit_pos = world_to_screen_no_grid(unit.pos)
             pygame.draw.circle(screen, (0, 255, 0), unit_pos, 2 * S, 0)
             health_bar((unit_pos[0], unit_pos[1] + 8), (20, 4), unit.hit_points, unit.max_hp)
             for guard in unit.guards:
-                guard_pos = world_to_screen_unit(guard.rel_pos + unit.pos)
+                guard_pos = world_to_screen_no_grid(guard.rel_pos + unit.pos)
                 pygame.draw.circle(screen, (0, 0, 255), guard_pos, 2 * S, 0)
                 health_bar((guard_pos[0], guard_pos[1] + 8), (16, 4), guard.hit_points, guard.max_hp)
+
+        for trap in game.player_traps:
+            trap_pos = world_to_screen_grid(trap.pos)
+            pygame.draw.rect(screen, (100,  50,  0), pygame.Rect(trap_pos[0] - 14, trap_pos[1] - 14, 28, 28))
+            pygame.draw.rect(screen, (50,  25,  0), pygame.Rect(trap_pos[0] - 9, trap_pos[1] - 9, 18, 18))
         
         # Player
         pygame.draw.circle(screen, (255, 0, 0), (w//2 + S * ts//2, h//2 + S * ts//2), S * ts//2, 0)

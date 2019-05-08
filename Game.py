@@ -3,6 +3,7 @@ from random import randint
 from Worldgen import World_map
 from Player import Player
 from Trade_unit import Trade_unit
+from Trap import Trap
 from Vector import Normalize, Vector as vect
 from Vector_math import vect_to_angle, vectors_to_angle, angle_to_vector
 from Dist import dist
@@ -26,6 +27,8 @@ class Game:
         self.player = None
 
         self.trade_units = []
+
+        self.player_traps = []
         
 
         # Reference times
@@ -34,6 +37,7 @@ class Game:
         self.eat_ref = time()
         self.regen_ref = time()
         self.attack_ref = time()
+        self.place_trap_ref = time()
         self.merchant_spawn_ref = time()
 
         # Highscores
@@ -62,9 +66,19 @@ class Game:
                 attack = True
             else:
                 attack = False
+            if pressed[pg.K_t]:
+                place_trap = True
+            else:
+                place_trap = False
             
             
-            # Debugging
+            # Player actions
+            if place_trap:
+                if time() - self.place_trap_ref > 0.2:
+                    if self.player.materials >= 5:
+                        self.place_trap_ref = time()
+                        self.player.materials -= 5
+                        self.player_traps.append(Trap((int(self.player.pos[0]), int(self.player.pos[1]))))
     
             # Movement
             # Player
@@ -123,6 +137,27 @@ class Game:
                             guard.attack(self.player)
                             self.check_if_player_dead()
 
+            # Traps
+            for trap in self.player_traps:
+                for unit in self.trade_units:
+                    if dist(trap.pos, unit.pos) < 1:
+                        trap.attack(unit)
+                        self.player_traps.remove(trap)
+                        self.check_if_unit_dead(unit)
+                        break
+                    for guard in unit.guards:
+                        if dist(trap.pos, (guard.rel_pos + unit.pos)) < 1:
+                            trap.attack(guard)
+                            self.player_traps.remove(trap)
+                            unit.check_if_guard_dead(guard)
+                            break
+                    else:
+                        continue
+                    break
+
+
+
+
 
             # Time Stuff
 
@@ -130,17 +165,17 @@ class Game:
 
             # Timed events
             # Player
-            if time() - self.eat_ref > 20: # Eating
+            if time() - self.eat_ref > 25 - (self.player.max_hp - self.player.hit_points): # Eating
                 if self.player.provisions > 0:
                     self.player.provisions -= 1
                 else:
                     self.death()
                 self.eat_ref = time()
 
-            if time() - self.regen_ref > 2:
+            if time() - self.regen_ref > 1.75:
                 if self.player.hit_points < self.player.max_hp:
-                    self.regen_ref = time()
                     self.player.hit_points += 1
+                    self.regen_ref = time()
 
             
             
