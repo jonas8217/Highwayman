@@ -6,6 +6,28 @@ from Game import Game
 
 
 
+pygame.init()
+"""
+icon = ""
+icon = io.BytesIO(base64.b64decode(icon))
+icon = pygame.image.load(icon)
+pygame.display.set_icon(icon)
+"""
+pygame.display.set_caption('highwayman')
+screen = pygame.display.set_mode((800, 600))
+# Initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
+small_font = pygame.font.SysFont("monospace", 15)
+big_font = pygame.font.SysFont("monospace", 45)
+
+running = True
+
+game = Game(pygame.display.Info())
+
+textinput = pygame_textinput.TextInput()
+
+clock = pygame.time.Clock()
+
+
 def draw_game():
     screen_info = pygame.display.Info()
     w, h = screen_info.current_w, screen_info.current_h
@@ -13,9 +35,10 @@ def draw_game():
     Small_size = small_font.size(' ')
     
     if game.state == 0:
+        
 
         pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 0, w, h))
-
+        
         pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(w//2 - 40, 50, 80, 40))
         txt_size = small_font.size("MENU")
         screen.blit(small_font.render("MENU", 1, (255, 255, 255)), (w//2 - txt_size[0]//2, 70 - txt_size[1]//2))
@@ -145,7 +168,7 @@ def draw_game():
 
     if game.state == 2 or game.state == 0:
         
-        controls = ["Movement: WASD", "Attack: Spacebar", "Pause: p", "Exit Game/New Game: ESC", "Sumbmit Score: Enter"]
+        controls = ["Movement: WASD", "Attack: Spacebar","Place trap: t" , "Pause: p", "Exit Game/New Game: ESC", "Sumbmit Score: Enter"]
         pygame.draw.rect(screen, (30, 30, 30), pygame.Rect(w//2 - 150, 400, 300, (len(controls) + 1) * (Small_size[1] + 3) + 3))
         screen.blit(small_font.render("Controls:", 1, (255, 255, 255)), (270, 403))
         for i, text in enumerate(controls):
@@ -162,9 +185,13 @@ def draw_game():
     elif game.state == 3:
         
         screen.fill((225, 225, 225))
+        global textinput
         screen.blit(textinput.get_surface(), (10, 10))
         if textinput.update(events) and len(textinput.get_text()) > 0:
             game.save_highscore(textinput.get_text())
+            textinput = pygame_textinput.TextInput()
+
+            
         
 
 def screen_to_world(pos):
@@ -172,29 +199,9 @@ def screen_to_world(pos):
 
 def health_bar (pos, size, health, max_health):
     pygame.draw.rect(screen, (  0,   0,   0), pygame.Rect(pos[0] - size[0]//2 - 1, pos[1] - size[1]//2 - 1, size[0] + 2, size[1] + 2))
-    pygame.draw.rect(screen, (255,   0,   0), pygame.Rect(pos[0] - size[0]//2, pos[1] - size[1]//2, size[0], size[1]))
-    pygame.draw.rect(screen, (  0, 255,   0), pygame.Rect(pos[0] - size[0]//2, pos[1] - size[1]//2, int(size[0] * health/max_health), size[1]))
+    pygame.draw.rect(screen, (255,   0,   0), pygame.Rect(pos[0] - size[0]//2    , pos[1] - size[1]//2    , size[0]    , size[1]))
+    pygame.draw.rect(screen, (  0, 255,   0), pygame.Rect(pos[0] - size[0]//2    , pos[1] - size[1]//2    , int(size[0] * health/max_health), size[1]))
 
-
-pygame.init()
-"""
-icon = ""
-icon = io.BytesIO(base64.b64decode(icon))
-icon = pygame.image.load(icon)
-pygame.display.set_icon(icon)
-"""
-pygame.display.set_caption('highwayman')
-screen = pygame.display.set_mode((800, 600))
-# Initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
-small_font = pygame.font.SysFont("monospace", 15)
-big_font = pygame.font.SysFont("monospace", 45)
-textinput = pygame_textinput.TextInput()
-
-running = True
-
-game = Game(pygame.display.Info())
-
-clock = pygame.time.Clock()
 
 while running:
     events = pygame.event.get()
