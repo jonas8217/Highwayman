@@ -14,7 +14,7 @@ class Player:
         self.last_attacked = time
         self.gold = 0
         self.provisions = 10
-        self.materials = 50
+        self.materials = 10
         self.rotation = 0
         
 
