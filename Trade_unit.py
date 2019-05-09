@@ -20,11 +20,11 @@ class Trade_unit():
             self.guards = assign_guards(guards, self.vel, time)
 
 
-    def move(self, p_pos):
-        if p_pos is not None:
+    def move(self, player):
+        if player is not None:
             if len(self.guards) > 0:
                 for guard in self.guards:
-                    guard.move(self.pos, p_pos)
+                    guard.move(self.pos, player)
             else:
                 self.pos += self.vel * self.speed * 1.2
         else:
@@ -68,7 +68,7 @@ class Guard:
         self.hit_points = self.max_hp
         self.damage = 3
         self.attack_range = 1.5
-        self.attack_rate = 3
+        self.attack_rate = 2.5
         self.attack_duration = 0.15
         self.last_attacked = time
 

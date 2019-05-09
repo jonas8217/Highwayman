@@ -324,4 +324,5 @@ class Game:
     def reset(self):
         self.player = None
         self.trade_units[:] = []
+        self.player_traps[:] = []
         self.localScores = self.get_local_highscores()[:5]

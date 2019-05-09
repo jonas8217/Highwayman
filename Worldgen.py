@@ -2,6 +2,7 @@ from Perlin import perlingrid as pGrid
 from City import City
 from Road import Road
 from math import ceil,tanh,sqrt
+from Dist import dist
 from Vector import Length,Normalize,Vector as vect
 from random import randint
 import numpy as np
@@ -165,19 +166,6 @@ class World_map:
                 uninterrupted = False
         return uninterrupted
 
-def dist(P1, P2):
-    # Returns distance between 2 points
-    return sqrt(((P1[0] - P2[0])**2) + ((P1[1] - P2[1])**2))
-
-def uniq(lst):
-    # Returns a duplicateless list
-    seen = set()
-    uniq = []
-    for i in lst:
-        if i not in seen:
-            uniq.append(i)
-            seen.add(i)
-    return uniq
 
 def shortets_dist(dists):
     # Finds the 'dist' touple with the smallest distance value
