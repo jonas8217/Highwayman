@@ -325,9 +325,3 @@ class Game:
         self.player = None
         self.trade_units[:] = []
         self.localScores = self.get_local_highscores()[:5]
-
-
-    
-    
-    
-
