@@ -15,30 +15,25 @@ from time import time
 class Game:
     def __init__(self, screen_info):
         w, h = screen_info.current_w, screen_info.current_h
+        # Gamestate
         self.state = 0
 
+        # Worldmap variabels
         self.world_map = None
-
+        
         self.game_scale = 5
         self.tile_size = 4
         self.world_dim = (w//self.tile_size,h//self.tile_size)
         self.game_dim = (self.world_dim[0]//self.game_scale, self.world_dim[1]//self.game_scale)
         
+        # Game dependant variabels
         self.player = None
 
         self.trade_units = []
 
         self.player_traps = []
         
-
-        # Reference times
         self.game_time = 0
-        self.game_ref = time()
-        self.eat_ref = time()
-        self.regen_ref = time()
-        self.attack_ref = time()
-        self.place_trap_ref = time()
-        self.merchant_spawn_ref = time()
 
         # Highscores
         self.localScores = self.get_local_highscores()[:5]
@@ -48,6 +43,14 @@ class Game:
         if self.state == 0.5:
             if pressed[pg.K_r]:
                 self.generate_world(self.world_dim[0],self.world_dim[1],randint(1,500),3)
+
+            # Reference times
+            self.game_ref = time()
+            self.eat_ref = time()
+            self.regen_ref = time()
+            self.attack_ref = time()
+            self.place_trap_ref = time()
+            self.merchant_spawn_ref = time()
         
         if self.state == 1:
 
@@ -154,9 +157,6 @@ class Game:
                     else:
                         continue
                     break
-
-
-
 
 
             # Time Stuff
