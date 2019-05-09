@@ -14,5 +14,3 @@ def vectors_to_angle(v1, v2):
 
 def angle_to_vector(a):
     return Vector(cos(a), sin(a))
-
-

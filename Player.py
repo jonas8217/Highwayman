@@ -25,6 +25,3 @@ class Player:
 
     def attack(self, target):
             target.hit_points -= self.damage
-
-
-    

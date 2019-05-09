@@ -45,9 +45,3 @@ def perlingrid(b, res, seed):
     x,y = np.meshgrid(lin,lin)
 
     return perlin(x,y,seed)
-
-"""
-p = perlingrid(3, 1000, 1)
-
-print(p.dtype, p.shape, p[1][1])
-"""

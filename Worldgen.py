@@ -188,4 +188,3 @@ def shortets_dist(dists):
         elif d[2] < shortest[2]:
             shortest = d
     return shortest
-
