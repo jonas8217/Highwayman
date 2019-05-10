@@ -128,11 +128,11 @@ def draw_game():
         for unit in game.trade_units:
             unit_pos = world_to_screen_no_grid(unit.pos)
             pygame.draw.circle(screen, (0, 255, 0), unit_pos, 2 * S, 0)
-            health_bar((unit_pos[0], unit_pos[1] + 8), (20, 4), unit.hit_points, unit.max_hp)
+            health_bar((unit_pos[0], unit_pos[1] + 8), (unit.max_hp, 4), unit.hit_points, unit.max_hp)
             for guard in unit.guards:
                 guard_pos = world_to_screen_no_grid(guard.rel_pos + unit.pos)
                 pygame.draw.circle(screen, (0, 0, 255), guard_pos, 2 * S, 0)
-                health_bar((guard_pos[0], guard_pos[1] + 8), (16, 4), guard.hit_points, guard.max_hp)
+                health_bar((guard_pos[0], guard_pos[1] + 8), (unit.max_hp, 4), guard.hit_points, guard.max_hp)
 
         for trap in game.player_traps:
             trap_pos = world_to_screen_grid(trap.pos)

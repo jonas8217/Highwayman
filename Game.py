@@ -57,13 +57,13 @@ class Game:
             # Controls input
             # Player
             p_vel = vect(0, 0)
-            if pressed[pg.K_UP]:
+            if pressed[pg.K_w]:
                 p_vel += vect(0, -1)
-            if pressed[pg.K_DOWN]:
+            if pressed[pg.K_s]:
                 p_vel += vect(0, 1)
-            if pressed[pg.K_LEFT]:
+            if pressed[pg.K_a]:
                 p_vel += vect(-1, 0)
-            if pressed[pg.K_RIGHT]:
+            if pressed[pg.K_d]:
                 p_vel += vect(1, 0)
             if pressed[pg.K_SPACE]:
                 attack = True
@@ -133,8 +133,8 @@ class Game:
             # Guards
             for unit in self.trade_units:
                 for guard in unit.guards:
-                    pos = unit.pos + guard.rel_pos
-                    if dist(pos, p_pos) < guard.attack_range:
+                    guard_pos = unit.pos + guard.rel_pos
+                    if dist(guard_pos, p_pos) < guard.attack_range:
                         if time() - guard.last_attacked > guard.attack_rate:
                             guard.last_attacked = time()
                             guard.attack(self.player)
@@ -172,15 +172,13 @@ class Game:
                     self.death()
                 self.eat_ref = time()
 
-            if time() - self.regen_ref > 1.75:
+            if time() - self.regen_ref > 1.75: # Regenration
                 if self.player.hit_points < self.player.max_hp:
                     self.player.hit_points += 1
                     self.regen_ref = time()
-
-            
             
             # Cities
-            if time() - self.merchant_spawn_ref > 3:
+            if time() - self.merchant_spawn_ref > 3: # Merchant spawning
                 self.spawn_trade_unit()
                 self.merchant_spawn_ref = time()
 
@@ -249,7 +247,7 @@ class Game:
         with open('highscore.txt', 'wb') as f:
             print('saving scorefile')
             pickle.dump(scores, f)
-
+        # Might implement later, depends on somthing i don't have control over
         """
         #online database
         if self.player.gold > 0:
