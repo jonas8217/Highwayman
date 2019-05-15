@@ -134,6 +134,11 @@ def draw_game():
                 pygame.draw.circle(screen, (0, 0, 255), guard_pos, 2 * S, 0)
                 health_bar((guard_pos[0], guard_pos[1] + 8), (16, 4), guard.hit_points, guard.max_hp)
 
+        for guard in game.rogue_guards:
+            guard_pos = world_to_screen_no_grid(guard.pos)
+            pygame.draw.circle(screen, (0, 0, 255), guard_pos, 2 * S, 0)
+            health_bar((guard_pos[0], guard_pos[1] + 8), (16, 4), guard.hit_points, guard.max_hp)
+
         for trap in game.player_traps:
             trap_pos = world_to_screen_grid(trap.pos)
             pygame.draw.rect(screen, (100,  50,  0), pygame.Rect(trap_pos[0] - 14, trap_pos[1] - 14, 28, 28))

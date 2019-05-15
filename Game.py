@@ -30,6 +30,7 @@ class Game:
         self.player = None
 
         self.trade_units = []
+        self.rogue_guards = []
 
         self.player_traps = []
         
@@ -112,6 +113,20 @@ class Game:
             for unit in to_pop[::-1]:
                 self.trade_units.remove(unit)
 
+            # Rogue guards
+            to_pop[:] = []
+            for guard in self.rogue_guards:
+                if dist(guard.pos, guard.end_city.pos) < guard.end_city.size / self.tile_size:
+                    to_pop.append(guard)
+                else:
+                    player = None
+                    if dist((int(p_pos.x), int(p_pos.y)), guard.pos) < guard.detect_dist:
+                        player = self.player
+                    guard.move(None, player)
+
+            for guard in to_pop[::-1]:
+                self.rogue_guards.remove(guard)
+
             # Attacks
             # Player
             
@@ -140,6 +155,8 @@ class Game:
                             guard.attack(self.player)
                             self.check_if_player_dead()
 
+            # Rogue guards
+            
             # Traps
             for trap in self.player_traps:
                 for unit in self.trade_units:
@@ -210,6 +227,10 @@ class Game:
             self.player.gold += unit.cargo[0] * randint(5,10)
             self.player.provisions += unit.cargo[1] * randint(5,10)
             self.player.materials += unit.cargo[2] * randint(5,10)
+            for guard in unit.guards:
+                guard.pos = unit.pos + guard.rel_pos
+                guard.end_city = unit.end_city
+                self.rogue_guards.append(guard)
             self.trade_units.remove(unit)
 
     def check_if_player_dead(self):

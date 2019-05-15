@@ -62,10 +62,13 @@ class Guard:
     def __init__(self, rel_pos, time):
         x, y = rel_pos.x, rel_pos.y
         self.rel_pos = vect(x,y)
-        self.original_rel_pos = vect(x,y) 
+        self.original_rel_pos = vect(x,y)
+        self.pos = None
+        self.end_city = None
         self.speed = 0.1
         self.max_hp = 15
         self.hit_points = self.max_hp
+        self.detect_dist = 6
         self.damage = 3
         self.attack_range = 1.5
         self.attack_rate = 2.5
@@ -73,15 +76,25 @@ class Guard:
         self.last_attacked = time
 
     def move(self, guarding_pos, player = None):
-        pos = self.rel_pos + guarding_pos
-        if player is not None:
-            p_pos = player.pos
-            if dist(pos, p_pos) > self.attack_range:
-                vel = Normalize(p_pos - pos)
+        if self.pos is None:
+            if player is not None:
+                pos = self.rel_pos + guarding_pos
+                p_pos = player.pos
+                if dist(pos, p_pos) > self.attack_range:
+                    vel = Normalize(p_pos - pos)
+                    self.rel_pos += vel * self.speed
+            else:
+                vel = Normalize(self.original_rel_pos - self.rel_pos)
                 self.rel_pos += vel * self.speed
         else:
-            vel = Normalize(self.original_rel_pos - self.rel_pos)
-            self.rel_pos += vel * self.speed
+            if player is not None:
+                p_pos = player.pos
+                if dist(self.pos, p_pos) > self.attack_range:
+                    vel = Normalize(p_pos - self.pos)
+                    self.pos += vel * self.speed
+            else:
+                vel = Normalize(vect(self.end_city.pos[0], self.end_city.pos[1]) - self.pos)
+                self.pos += vel * self.speed
 
     def attack(self, target):
         target.hit_points -= self.damage
