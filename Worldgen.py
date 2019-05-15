@@ -47,27 +47,22 @@ class World_map:
         for x in range(w):
             self.tiles.append([])
             for y in range(h):
-                tile = tanh(p[x][y]/(0.45*(size_val/0.5)))*0.5+0.5
-                #tile = p[x][y]
-                """
-                if (x, y) == max_pos:
-                    tile_inf = (-1, (255,0,0))
-                elif (x, y) == min_pos:
-                    tile_inf = (-1, (255,255,0))
-                """
+                tile = tanh(p[x][y]/(0.90*size_val)) * 0.5 + 0.5
+
                 if tile < 0.2:
-                    tile_inf = (0, (13 - tile * 54, 61 - tile * 57, 120 - tile * 61), 0.2) #Water
+                    tile_info = (0, (13 - tile * 54, 61 - tile * 57, 120 - tile * 61), 0.2) #Water
                 elif tile < 0.22:
-                    tile_inf = (1, (246, 220, 55), 0.75) #Beach
+                    tile_info = (1, (246, 220, 55), 0.75) #Beach
                 elif tile < 0.65:
-                    tile_inf = (2, (146, 203, 54), 1.25) #Grassland
+                    tile_info = (2, (146, 203, 54), 1.25) #Grassland
                 elif tile < 0.7:
-                    tile_inf = (3, (107, 164, 15), 1) #Highlands
+                    tile_info = (3, (107, 164, 15), 1) #Highlands
                 elif tile < 0.8:
-                    tile_inf = (4, (-45 * (tile-0.7)*10 + 140, -45 * (tile-0.7)*10 + 140, -45 * (tile-0.7)*10 + 140), 0.6) #Mountain
+                    tile_info = (4, (-45 * (tile-0.7)*10 + 140, -45 * (tile-0.7)*10 + 140, -45 * (tile-0.7)*10 + 140), 0.6) #Mountain
                 else:
-                    tile_inf = (5, (55 * (tile-0.8)*5 + 200, 55 * (tile-0.8)*5 + 200, 55 * (tile-0.8)*5 + 200), 0.45) #Mountain_top_snow
-                self.tiles[x].append(tile_inf)
+                    tile_info = (5, (55 * (tile-0.8)*5 + 200, 55 * (tile-0.8)*5 + 200, 55 * (tile-0.8)*5 + 200), 0.45) #Mountain_top_snow
+                
+                self.tiles[x].append(tile_info)
 
         # City generation
         for i in range(100):
