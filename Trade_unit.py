@@ -1,4 +1,4 @@
-from Vector import Normalize, Vector as vect
+from Vector import Normalize, Length, Vector as vect
 from math import cos,sin,pi
 from Dist import dist
 
@@ -21,10 +21,15 @@ class Trade_unit():
 
 
     def move(self, player):
+        other_guards = []
+        for i,guard in enumerate(self.guards):
+            for j in range(i,len(self.guards)):
+                if dist(guard.pos, self.guards[j].pos) < 1:
+                    other_guards.append(self.guards[j])
         if player is not None:
             if len(self.guards) > 0:
                 for guard in self.guards:
-                    guard.move(self.pos, player)
+                    guard.move(self.pos, player, other_guards)
             else:
                 self.pos += self.vel * self.speed * 1.2
         else:
@@ -36,7 +41,7 @@ class Trade_unit():
                 self.pos += self.vel * self.speed
             else:
                 for guard in self.guards:
-                    guard.move(self.pos)
+                    guard.move(self.pos, None, other_guards)
 
     def check_if_guard_dead(self, guard):
         if guard.hit_points <= 0:
@@ -75,25 +80,37 @@ class Guard:
         self.attack_duration = 0.15
         self.last_attacked = time
 
-    def move(self, guarding_pos, player = None):
+    def move(self, guarding_pos, player = None, other_guards = []):
+        guard_bounce = vect(0,0)
         if self.pos is None:
+            for guard in other_guards:
+                other_guard_vect = self.rel_pos + guarding_pos - guard.pos
+                guard_bounce += Normalize(other_guard_vect) * (0.25/(Length(other_guard_vect) + 0.1) - 0.25)
             if player is not None:
                 pos = self.rel_pos + guarding_pos
                 p_pos = player.pos
                 if dist(pos, p_pos) > self.attack_range:
                     vel = Normalize(p_pos - pos)
+                    vel += Normalize(guard_bounce)
                     self.rel_pos += vel * self.speed
             else:
+                vel += Normalize(guard_bounce)
                 vel = Normalize(self.original_rel_pos - self.rel_pos)
                 self.rel_pos += vel * self.speed
         else:
+            for guard in other_guards:
+                other_guard_vect = self.pos - guard.pos
+                guard_bounce += Normalize(other_guard_vect) * (0.25/(Length(other_guard_vect) + 0.1) - 0.25)
+            guard_bounce = Normalize(guard_bounce)
             if player is not None:
                 p_pos = player.pos
                 if dist(self.pos, p_pos) > self.attack_range:
                     vel = Normalize(p_pos - self.pos)
+                    vel += Normalize(guard_bounce)
                     self.pos += vel * self.speed
             else:
                 vel = Normalize(vect(self.end_city.pos[0], self.end_city.pos[1]) - self.pos)
+                vel += Normalize(guard_bounce)
                 self.pos += vel * self.speed
 
     def attack(self, target):
