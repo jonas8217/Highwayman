@@ -24,7 +24,7 @@ class Trade_unit():
         other_guards = []
         for i,guard in enumerate(self.guards):
             for j in range(i,len(self.guards)):
-                if dist(guard.pos, self.guards[j].pos) < 1:
+                if dist(guard.rel_pos, self.guards[j].rel_pos) < 1:
                     other_guards.append(self.guards[j])
         if player is not None:
             if len(self.guards) > 0:
@@ -84,7 +84,7 @@ class Guard:
         guard_bounce = vect(0,0)
         if self.pos is None:
             for guard in other_guards:
-                other_guard_vect = self.rel_pos + guarding_pos - guard.pos
+                other_guard_vect = self.rel_pos + guarding_pos - guard.rel_pos
                 guard_bounce += Normalize(other_guard_vect) * (0.25/(Length(other_guard_vect) + 0.1) - 0.25)
             if player is not None:
                 pos = self.rel_pos + guarding_pos
